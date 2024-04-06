@@ -15,7 +15,7 @@ import {
 
 import { UploadOutlined, StarOutlined } from "@ant-design/icons";
 import { useAddBook } from "../../api/book/queries";
-import { useFetchAuthor } from "../../api/author/queries";
+import { useFetchAuthor } from "../../api/product/queries";
 import { useFetchCategory } from "../../api/category/queries";
 import dayjs from "dayjs";
 
@@ -49,7 +49,7 @@ interface CreateBookProps {
   form: FormInstance<any>;
   onSucess: () => void;
 }
- 
+
 const CreateBook: React.FC<CreateBookProps> = ({
   selectedBook,
   form,

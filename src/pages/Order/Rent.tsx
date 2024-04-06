@@ -10,11 +10,13 @@ import {
   Input,
   Upload,
   Modal,
+  Breadcrumb,
 } from "antd";
 import type { TableProps } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
+import { ProductOutlined, DashboardOutlined } from "@ant-design/icons";
 
 const { Dragger } = Upload;
 
@@ -26,7 +28,7 @@ import {
   useDownloadTransactionDetails,
   useUploadTransactionDetails,
   useupdateTransaction,
-} from "../../api/transaction/queries";
+} from "../../api/order/queries";
 
 interface TransactionDataType {
   id: any;
@@ -291,7 +293,23 @@ const TransactionSetup: React.FC = () => {
   return (
     <div className="flex-grow mx-10 mt-5 max-h-96">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Rent Book</h2>
+        <div>
+          <h2 className="text-xl font-bold">All Products</h2>
+          <Breadcrumb
+            separator={<span style={{ color: "black" }}>/</span>}
+            className="bg-indigo-100 my-4 rounded-lg p-2 text-xs inline-flex text-black"
+          >
+            <Breadcrumb.Item>
+              <DashboardOutlined />
+              <span>Dashboard</span>
+            </Breadcrumb.Item>
+
+            <Breadcrumb.Item>
+              <ProductOutlined />
+              <span>All Orders</span>
+            </Breadcrumb.Item>
+          </Breadcrumb>
+        </div>
         <Button
           className="bg-white text-black font-bold py-1 px-4 rounded-full transform hover:scale-105 hover:shadow-md"
           type="default"

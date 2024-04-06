@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  Breadcrumb,
   Button,
   Form,
   Input,
@@ -15,6 +16,8 @@ import {
   useFetchAllUsers,
   // useReactivateUser,
 } from "../../api/user/queries";
+
+import { UserOutlined, DashboardOutlined } from "@ant-design/icons";
 
 const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -185,6 +188,23 @@ const App: React.FC = () => {
   return (
     <>
       <div className="flex-grow mx-10 mt-5 max-h-96">
+        <div>
+          <h2 className="text-xl font-bold">All Users </h2>
+          <Breadcrumb
+            separator={<span style={{ color: "black" }}>/</span>}
+            className="bg-indigo-100 my-4 rounded-lg p-2 text-xs inline-flex text-black"
+          >
+            <Breadcrumb.Item>
+              <DashboardOutlined />
+              <span>Dashboard</span>
+            </Breadcrumb.Item>
+
+            <Breadcrumb.Item>
+              <UserOutlined />
+              <span>All Users</span>
+            </Breadcrumb.Item>
+          </Breadcrumb>
+        </div>
         <Button
           type="default"
           onClick={showModal}

@@ -3,16 +3,12 @@ import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Route, Routes, Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/AuthContext";
 import Sidebar from "../Sidebar/Sidebar";
-import AuthorSetup from "../../pages/Author/AuthorSetup";
-import BookSetup from "../../pages/Book/BookSetup";
-import Rent from "../../pages/Rent/Rent";
-import CategorySetup from "../../pages/Category/CategorySetup";
+import AuthorSetup from "../../pages/Products/AuthorSetup";
+import Rent from "../../pages/Order/Rent";
 import Manage from "../../pages/ManageUsers/Manage";
-import MemberSetup from "../../pages/Member/MemberSetup";
 
 import Charts from "../../pages/Charts";
 import { useEffect, useState } from "react";
-import Return from "../../pages/Return/Return";
 import { useChangePassword } from "../../api/user/queries";
 
 const { Header: AntHeader } = Layout;
@@ -94,8 +90,8 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <Layout>
-        <AntHeader className="bg-white text-black flex items-center justify-between p-4">
+      <Layout className="bg-[#F8F8FF]">
+        <AntHeader className="  bg-white text-black flex items-center justify-between p-4 shadow-3xl">
           <Link to="/dashboard" className="text-2xl font-bold text-black">
             Order Aayo{" "}
           </Link>
@@ -127,7 +123,7 @@ const Dashboard: React.FC = () => {
         </AntHeader>
 
         <div className="flex flex-col md:flex-row  ">
-          <div>
+          <div className="">
             <Sidebar />
           </div>
           <div className="flex-1 p-4  overflow-auto 	">
@@ -138,13 +134,13 @@ const Dashboard: React.FC = () => {
                   <Navigate to={loggedIn ? "/dashboard" : "/login"} replace />
                 }
               />
-              <Route path="author-setup" element={<AuthorSetup />} />
-              <Route path="author-setup" element={<AuthorSetup />} />
+              <Route path="all-products" element={<AuthorSetup />} />
+              {/* <Route path="author-setup" element={<AuthorSetup />} />
               <Route path="category-setup" element={<CategorySetup />} />
-              <Route path="member-setup" element={<MemberSetup />} />
-              <Route path="book-setup" element={<BookSetup />} />
-              <Route path="rent-book" element={<Rent />} />
-              <Route path="return-book" element={<Return />} />
+              <Route path="member-setup" element={<MemberSetup />} /> 
+              <Route path="book-setup" element={<BookSetup />} /> */}
+              <Route path="order-list" element={<Rent />} />
+              {/* <Route path="return-book" element={<Return />} /> */}
               <Route path="manage-users" element={<Manage />} />
             </Routes>
 

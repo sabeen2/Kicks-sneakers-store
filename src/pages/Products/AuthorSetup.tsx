@@ -10,9 +10,16 @@ import {
   Input,
   Upload,
   Modal,
+  Breadcrumb,
 } from "antd";
 import type { TableProps } from "antd";
-import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  UploadOutlined,
+  AppstoreAddOutlined,
+  ProductOutlined,
+  DashboardOutlined,
+} from "@ant-design/icons";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 
@@ -26,7 +33,7 @@ import {
   useFindAuthorById,
   useDownloadAuthorDetails,
   useUploadAuthorDetails,
-} from "../../api/author/queries";
+} from "../../api/product/queries";
 
 interface AuthorDataType {
   authorId: string;
@@ -260,21 +267,39 @@ const AuthorSetup: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow mx-10 mt-5 max-h-96">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Author Setup</h2>
-        <Button
-          className="bg-white text-black font-bold py-1 px-4 rounded-full transform hover:scale-105 hover:shadow-md"
-          type="default"
+    <div className="flex-grow mt-5 max-h-96 mx-auto container">
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <h2 className="text-xl font-bold">All Products</h2>
+          <Breadcrumb
+            separator={<span style={{ color: "black" }}>/</span>}
+            className="bg-indigo-100 my-4 rounded-lg p-2 text-xs inline-flex text-black"
+          >
+            <Breadcrumb.Item>
+              <DashboardOutlined />
+              <span>Dashboard</span>
+            </Breadcrumb.Item>
+
+            <Breadcrumb.Item>
+              <ProductOutlined />
+              <span>All Products</span>
+            </Breadcrumb.Item>
+          </Breadcrumb>
+        </div>
+
+        <button
+          className="w-[20vh] bg-black text-white font-bold py-1 px-4 hover:bg-gray-600 rounded-md transform hover:scale-105 hover:shadow-md"
           onClick={showDrawer}
         >
-          Create
-        </Button>
+          <AppstoreAddOutlined className="align-middle mr-2" />
+          Add Products
+        </button>
+
         <Drawer
           className="flex"
           width={800}
           autoFocus
-          title={selectedAuthor ? "Edit Author" : "Create Author"}
+          title={selectedAuthor ? "Edit Product" : "Add Product"}
           onClose={onClose}
           open={open}
         >
@@ -287,6 +312,7 @@ const AuthorSetup: React.FC = () => {
           </div>
         </Drawer>
       </div>
+
       <div className=" flex flex-wrap items-center">
         <Form
           form={inputForm}

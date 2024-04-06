@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button, Form, FormInstance, Input, Space, message } from "antd";
 
-import { useAddAuthor, useupdateAuthor } from "../../api/author/queries";
+import { useAddAuthor, useupdateAuthor } from "../../api/product/queries";
 
 const layout = {
   labelCol: { span: 8 },

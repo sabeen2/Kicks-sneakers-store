@@ -8,9 +8,9 @@ import {
   FieldTimeOutlined,
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/charts";
-import { useFetchTransaction } from "../api/transaction/queries";
+import { useFetchTransaction } from "../api/order/queries";
 import { useFetchMember } from "../api/members/queries";
-import { useFetchAuthor } from "../api/author/queries";
+import { useFetchAuthor } from "../api/product/queries";
 import { useFetchCategory } from "../api/category/queries";
 import { useFetchBook } from "../api/book/queries";
 

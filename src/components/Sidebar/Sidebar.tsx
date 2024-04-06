@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-import { UserOutlined, BookOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  BookOutlined,
+  ProductOutlined,
+  OrderedListOutlined,
+  DashboardOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
@@ -31,17 +37,27 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Manage", "sub1", <SettingOutlined />, [
-    getItem("Author Setup", "3", undefined, undefined, "author-setup"),
-    getItem("Category Setup", "4", undefined, undefined, "category-setup"),
-    getItem("Member Setup", "5", undefined, undefined, "member-setup"),
-    getItem("Book Setup", "6", undefined, undefined, "book-setup"),
+  getItem("Dashboard", "11", <DashboardOutlined />, undefined, "/"),
+  getItem("Products", "sub1", <ProductOutlined />, [
+    getItem("All Products", "3", undefined, undefined, "all-products"),
+    // getItem("Category Setup", "4", undefined, undefined, "category-setup"),
+    // getItem("Member Setup", "5", undefined, undefined, "member-setup"),
+    // getItem("Book Setup", "6", undefined, undefined, "book-setup"),
   ]),
-  getItem("Transaction", "sub2", <BookOutlined />, [
-    getItem("Rent/Return", "7", undefined, undefined, "rent-book"),
-    getItem("Return History", "8", undefined, undefined, "return-book"),
-    getItem("Manage Users", "9", <UserOutlined />, undefined, "manage-users"),
+  getItem("Orders", "sub2", <BookOutlined />, [
+    getItem("Order List", "7", undefined, undefined, "order-list"),
+    // getItem("Return History", "8", undefined, undefined, "return-book"),
+    // getItem("Manage Users", "9", <UserOutlined />, undefined, "manage-users"),
   ]),
+  getItem(
+    "Categories",
+    "9",
+    <OrderedListOutlined />,
+    undefined,
+    "manage-users"
+  ),
+
+  getItem("Manage Users", "10", <UserOutlined />, undefined, "manage-users"),
 ];
 
 const Sidebar: React.FC = () => {
@@ -62,14 +78,18 @@ const Sidebar: React.FC = () => {
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
           theme="light"
+          width={240}
+          // style={{ background: "#f3f4f600" }}
         >
           <Menu
+            // className="bg-gray-100"
             theme="light"
             defaultSelectedKeys={["1"]}
             mode="inline"
             items={items}
             defaultOpenKeys={["sub1", "sub2"]}
             onSelect={handleMenuSelect}
+            // style={{ background: "#ECF3F9" }}
           />
         </Sider>
         <Layout>

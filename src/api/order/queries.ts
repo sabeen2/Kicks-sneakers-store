@@ -17,7 +17,6 @@ const {
   mailDueTransaction,
   downloadTransactionDetails,
   handleTransactionDataUpload,
-  fetchPageCount,
 } = transaction;
 
 export const useFetchAllTransaction = (
@@ -106,11 +105,5 @@ export const useUploadTransactionDetails = () => {
 export const useMailDueTransaction = () => {
   return useMutation(() => {
     return makeHttpRequest(mailDueTransaction);
-  });
-};
-
-export const useFetchPageCount = () => {
-  return useQuery([fetchPageCount.queryKeyName], () => {
-    return makeHttpRequest(fetchPageCount);
   });
 };
