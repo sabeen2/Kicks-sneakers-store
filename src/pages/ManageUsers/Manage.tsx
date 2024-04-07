@@ -28,10 +28,13 @@ const App: React.FC = () => {
 
   type FieldType = {
     id: number;
+    email?: string;
+    role?: string;
     username?: string;
     password?: string;
     userType?: string;
     deleted?: boolean;
+    addedBy?: string;
   };
 
   const {
@@ -49,6 +52,7 @@ const App: React.FC = () => {
 
   const showModal = () => {
     setIsModalOpen(true);
+    // addform.resetFields();
   };
 
   const handleCancel = () => {
@@ -101,23 +105,20 @@ const App: React.FC = () => {
 
   const columns: TableProps<FieldType>["columns"] = [
     {
-      title: "UserID",
-      dataIndex: "id",
-      key: "id",
-      className: "px-4 py-2",
-      sorter: (a: any, b: any) => a.id - b.id,
-      sortDirections: ["descend"],
-      defaultSortOrder: "ascend",
-    },
-    {
       title: "UserName",
-      dataIndex: "username",
+      dataIndex: "email",
       key: "username",
       className: "px-4 py-2",
     },
     {
       title: "UserType",
-      dataIndex: "userType",
+      dataIndex: "role",
+      key: "userType",
+      className: "px-4 py-2",
+    },
+    {
+      title: "Added By",
+      dataIndex: "addedBy",
       key: "userType",
       className: "px-4 py-2",
     },
