@@ -4,7 +4,6 @@ import author from "./query-details";
 import { makeHttpRequest } from "../../utils/http/make-http-request";
 import {
   AuthorUpdateRequest,
-  AuthorAddRequest,
   AuthorUploadRequest,
 } from "../../schema/author.schema";
 import { makeExcelRequest } from "../../utils/http/make-excel-download";

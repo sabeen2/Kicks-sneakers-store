@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button, Form, Input, Space, message, Select, InputNumber } from "antd";
 import axios from "axios";
-import dayjs from "dayjs";
 
 const layout = {
   labelCol: { span: 8 },
@@ -70,7 +69,7 @@ const CreateOrder = () => {
           message.error("Failed to add product");
         }
       })
-      .catch((error) => {
+      .catch(() => {
         message.error("Failed to add product");
       });
   };

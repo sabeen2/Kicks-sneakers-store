@@ -7,7 +7,6 @@ import {
   Space,
   message,
   Upload,
-  Drawer,
 } from "antd";
 import axios from "axios";
 
@@ -73,6 +72,8 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
           },
         }
       );
+
+      response;
 
       message.success(`Added product successfully: ${values.name}`);
       onSucess();

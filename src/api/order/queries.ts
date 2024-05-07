@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from "react-query";
 
-import { TransactionAddRequest } from "../../schema/transaction.schema";
 import transaction from "./query-details";
 import { makeHttpRequest } from "../../utils/http/make-http-request";
 import { TransactionUpdateRequest } from "../../schema/transaction.schema";

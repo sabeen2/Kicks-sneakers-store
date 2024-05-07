@@ -10,13 +10,9 @@ import {
   InputNumber,
 } from "antd";
 
-import {
-  useAddTransaction,
-  useupdateTransaction,
-} from "../../api/order/queries";
-import { useFetchMember } from "../../api/members/queries";
+import { useAddTransaction } from "../../api/order/queries";
+// import { useFetchMember } from "../../api/members/queries";
 
-import dayjs from "dayjs";
 import axios from "axios";
 
 const layout = {
@@ -64,8 +60,10 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
   const onFinish = (values: any) => {
     console.log(values);
     let payload: any = {
+      // orderId: values.orderId,
       customerName: values.customerName,
       customerContact: values.customerContact,
+
       orderItems: [
         {
           productId: values.productId,
@@ -116,7 +114,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
     }
   }, [selectedTransaction, form]);
 
-  const { data: memberData } = useFetchMember();
+  // const { data: memberData } = useFetchMember();
 
   const calculateToDate = (value: any) => {
     if (value === null) {
@@ -130,6 +128,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
       form.setFieldsValue({ toDate: toDate.toISOString().split("T")[0] });
     }
   };
+  calculateToDate(66);
 
   useEffect(() => {
     const fetchProducts = async () => {

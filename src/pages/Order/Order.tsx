@@ -30,16 +30,20 @@ import {
   useupdateTransaction,
 } from "../../api/order/queries";
 
-interface TransactionDataType {
-  id: any;
-  bookName: string;
-  code: any;
-  fromDate: any;
+// interface TransactionDataType {
+//   id: any;
+//   bookName: string;
+//   code: any;
+//   fromDate: any;
 
-  toDate: any;
-  transactionType: any;
-  memberName: any;
-}
+//   toDate: any;
+//   transactionType: any;
+//   prodId: number;
+//   productName: string;
+//   productType: string;
+//   quantity: number;
+//   price: number;
+// }
 
 interface ProductDataType {
   prodId: number;
@@ -62,12 +66,12 @@ interface OrderDataType {
 const Order: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<
-    TransactionDataType | any
+    OrderDataType | any
   >(null);
   const [findTheTransaction, setFindTheTransaction] = useState<
-    TransactionDataType | any
+    OrderDataType | any
   >(null);
-  const [findByName, setFindByName] = useState<TransactionDataType | any>(null);
+  const [findByName, setFindByName] = useState<OrderDataType | any>(null);
   const [inputValueIsNumber, setInputValueIsNumber] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
   const [form] = Form.useForm();
@@ -75,9 +79,9 @@ const Order: React.FC = () => {
   const [uploadForm] = Form.useForm();
 
   const [searchedTransactionId, setSearchedTransactionId] = useState<
-    TransactionDataType | any
+    OrderDataType | any
   >("");
-  const [page, setPage] = React.useState(1);
+  // const [setPage] = React.useState(1);
 
   const columns: TableProps<OrderDataType>["columns"] = [
     {
@@ -137,7 +141,7 @@ const Order: React.FC = () => {
             overlayStyle={{ width: "400px", height: "100px" }}
           >
             <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
-              Return
+              Dispatch
             </button>
           </Popconfirm>
         </Space>
@@ -145,7 +149,7 @@ const Order: React.FC = () => {
     },
   ];
 
-  const showEditDrawer = (transaction: TransactionDataType) => {
+  const showEditDrawer = (transaction: OrderDataType) => {
     setSelectedTransaction(transaction);
     setOpen(true);
   };
@@ -226,7 +230,7 @@ const Order: React.FC = () => {
 
   useEffect(() => {
     const searchedTransactions = transactionData?.filter(
-      (transaction: TransactionDataType) => {
+      (transaction: OrderDataType) => {
         return Object.values(transaction).some((value) =>
           String(value).toLowerCase().includes(searchText.toLowerCase())
         );
@@ -390,9 +394,7 @@ const Order: React.FC = () => {
         pagination={{
           pageSize: 7,
           responsive: true,
-          onChange(curtransaction) {
-            setPage(curtransaction);
-          },
+          onChange() {},
         }}
       />
 

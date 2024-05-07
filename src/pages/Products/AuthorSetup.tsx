@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Drawer, Form } from "antd";
+import { Button, Drawer, Form } from "antd";
 import axios from "axios";
 import CreateAuthor from "./CreateAuthor";
 import lol from "../../assets/image.png";
