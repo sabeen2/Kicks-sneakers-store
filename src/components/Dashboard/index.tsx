@@ -4,7 +4,7 @@ import { Route, Routes, Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/AuthContext";
 import Sidebar from "../Sidebar/Sidebar";
 import AuthorSetup from "../../pages/Products/AuthorSetup";
-import Rent from "../../pages/Order/Rent";
+import Order from "../../pages/Order/Order";
 import Manage from "../../pages/ManageUsers/Manage";
 
 import Charts from "../../pages/Charts";
@@ -139,7 +139,7 @@ const Dashboard: React.FC = () => {
               <Route path="category-setup" element={<CategorySetup />} />
               <Route path="member-setup" element={<MemberSetup />} /> 
               <Route path="book-setup" element={<BookSetup />} /> */}
-              <Route path="order-list" element={<Rent />} />
+              <Route path="order-list" element={<Order />} />
               {/* <Route path="return-book" element={<Return />} /> */}
               <Route path="manage-users" element={<Manage />} />
             </Routes>

@@ -6,14 +6,14 @@ import {
 
 const author = {
   fetchAuthor: {
-    controllerName: `lib/authors/all-authors`,
-    queryKeyName: `FETCH_AUTHOR`,
+    controllerName: `products/get-all-products`,
+    queryKeyName: `FETCH_PRODUCT`,
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
 
-  addAuthor: {
-    controllerName: `lib/authors/add-author`,
+  addProduct: {
+    controllerName: `products/add-product`,
     queryKeyName: `ADD_AUTHOR`,
     requestMethod: RequestMethodEnum.POST,
     requestAuthType: RequestAuthType.AUTH,

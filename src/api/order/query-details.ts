@@ -6,21 +6,21 @@ import {
 
 const transaction = {
   fetchAllTransaction: {
-    controllerName: `lib/transactions/get-transactions-history`,
+    controllerName: `orders/get-orders`,
     queryKeyName: `FETCH_ALL`,
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
 
   fetchActiveTransaction: {
-    controllerName: `lib/transactions/get-all-transactions`,
+    controllerName: `orders/get-orders`,
     queryKeyName: `FETCH_TRANSACTION`,
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
 
   addTransaction: {
-    controllerName: `lib/transactions/add-transaction`,
+    controllerName: `orders/add-order`,
     queryKeyName: `ADD_TRANSACTION`,
     requestMethod: RequestMethodEnum.POST,
     requestAuthType: RequestAuthType.AUTH,

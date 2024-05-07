@@ -41,7 +41,25 @@ interface TransactionDataType {
   memberName: any;
 }
 
-const TransactionSetup: React.FC = () => {
+interface ProductDataType {
+  prodId: number;
+  productName: string;
+  productType: string;
+  quantity: number;
+  price: number;
+}
+
+interface OrderDataType {
+  prodId(prodId: any): void;
+  orderId: number;
+  customerName: string;
+  customerContact: string;
+  products: ProductDataType[];
+  total: number;
+  orderDate: string;
+}
+
+const Order: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<
     TransactionDataType | any
@@ -61,50 +79,38 @@ const TransactionSetup: React.FC = () => {
   >("");
   const [page, setPage] = React.useState(1);
 
-  const columns: TableProps<TransactionDataType>["columns"] = [
+  const columns: TableProps<OrderDataType>["columns"] = [
     {
-      title: "SN",
-      dataIndex: "index",
-      key: "index",
-      render: (_, __, index) => (page - 1) * 7 + index + 1,
-      sorter: (a, b) => {
-        const numA = parseInt(a.id, 10);
-        const numB = parseInt(b.id, 10);
-        return numA - numB;
-      },
-      sortDirections: ["descend"],
-      defaultSortOrder: "ascend",
-    },
-
-    {
-      title: "Book Name",
-      dataIndex: "bookName",
-      key: "bookName",
+      title: "Order ID",
+      dataIndex: "orderId",
+      key: "orderId",
     },
     {
-      title: "From",
-      dataIndex: "fromDate",
-      key: "fromDate",
+      title: "Customer Name",
+      dataIndex: "customerName",
+      key: "customerName",
     },
     {
-      title: "To",
-      dataIndex: "toDate",
-      key: "toDate",
+      title: "Contact",
+      dataIndex: "customerContact",
+      key: "customerContact",
     },
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
+      title: "Product Name",
+      dataIndex: "products",
+      key: "productName",
+      render: (products: ProductDataType[]) =>
+        products.map((product) => product.productName).join(", "),
     },
     {
-      title: "Rent Status",
-      dataIndex: "rentType",
-      key: "rentType",
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
     },
     {
-      title: "Member",
-      dataIndex: "memberName",
-      key: "memberName",
+      title: "Order Date",
+      dataIndex: "orderDate",
+      key: "orderDate",
     },
     {
       title: "Action",
@@ -121,10 +127,10 @@ const TransactionSetup: React.FC = () => {
           <Popconfirm
             title={
               <span style={{ fontSize: "20px" }}>
-                Are you sure you want to return this Book?
+                Are you sure you want to dispatch?
               </span>
             }
-            onConfirm={() => handleReturn(record.id)}
+            onConfirm={() => handleReturn(record.prodId)}
             okText={<span className=" w-10">Yes</span>}
             cancelText={<span className=" w-10">No</span>}
             okButtonProps={{ danger: true }}
@@ -449,4 +455,4 @@ const TransactionSetup: React.FC = () => {
   );
 };
 
-export default TransactionSetup;
+export default Order;

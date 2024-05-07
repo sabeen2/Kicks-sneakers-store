@@ -1,7 +1,15 @@
-import React, { useEffect } from "react";
-import { Button, Form, FormInstance, Input, Space, message } from "antd";
-
-import { useAddAuthor, useupdateAuthor } from "../../api/product/queries";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Form,
+  FormInstance,
+  Input,
+  Space,
+  message,
+  Upload,
+  Drawer,
+} from "antd";
+import axios from "axios";
 
 const layout = {
   labelCol: { span: 8 },
@@ -15,8 +23,11 @@ const tailLayout = {
 interface AuthorDataType {
   authorId: any;
   name: string;
-  email: string;
-  mobileNumber: string;
+  stock: number;
+  prodType: string;
+  sellingPrice: number;
+  costPrice: number;
+  file: File | undefined;
 }
 
 interface CreateAuthorProps {
@@ -31,38 +42,45 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
   form,
   onSucess,
 }) => {
-  const { mutate: addAuthor, isLoading: isAddingAuthor } = useAddAuthor();
-  const { mutate: editAuthor } = useupdateAuthor();
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const token = localStorage.getItem("bookRental");
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
+    setIsAddingProduct(true);
+
     let payload: any = {
       name: values.name,
-      email: values.email,
-      mobileNumber: values.mobileNumber,
+      stock: values.stock,
+      prodType: values.prodType,
+      sellingPrice: values.sellingPrice,
+      costPrice: values.costPrice,
+      file: values.file?.[0]?.originFileObj,
     };
-    if (selectedAuthor) {
-      payload = { ...payload, authorId: selectedAuthor.authorId };
+
+    const formData = new FormData();
+    for (const key in payload) {
+      formData.append(key, payload[key]);
     }
-    selectedAuthor
-      ? editAuthor(payload, {
-          onSuccess: () => {
-            message.success(`Edited author Sucessfully:  ${values.name}`);
-            onSucess();
-            onSucess();
+
+    try {
+      const response = await axios.post(
+        "https://orderayo.onrender.com/products/add-product",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
-          onError: (errorMessage) => {
-            message.error(`Failed Editing: ${errorMessage}`);
-          },
-        })
-      : addAuthor(payload, {
-          onSuccess: () => {
-            message.success(`Added author Sucessfully:  ${values.name}`);
-            onSucess();
-          },
-          onError: (errorMessage) => {
-            message.error(`Failed Creating ${errorMessage}`);
-          },
-        });
+        }
+      );
+
+      message.success(`Added product successfully: ${values.name}`);
+      onSucess();
+    } catch (error) {
+      message.error(`Failed to add product: ${message}`);
+    }
+
+    setIsAddingProduct(false);
   };
 
   const onReset = () => {
@@ -73,8 +91,11 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
     if (selectedAuthor) {
       form.setFieldsValue({
         name: selectedAuthor.name,
-        email: selectedAuthor.email,
-        mobileNumber: parseFloat(selectedAuthor.mobileNumber),
+        stock: selectedAuthor.stock,
+        prodType: selectedAuthor.prodType,
+        sellingPrice: selectedAuthor.sellingPrice,
+        costPrice: selectedAuthor.costPrice,
+        file: selectedAuthor.file,
       });
     }
   }, [selectedAuthor, form]);
@@ -88,12 +109,13 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
         onFinish={onFinish}
         style={{ maxWidth: 600 }}
       >
+        {/* Form fields */}
         <Form.Item
           label="Name"
           name="name"
           rules={[
             {
-              required: selectedAuthor ? false : false,
+              required: true,
               message: "Please enter the name",
             },
           ]}
@@ -102,13 +124,12 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
         </Form.Item>
 
         <Form.Item
-          label="Email"
-          name="email"
+          label="Stock"
+          name="stock"
           rules={[
             {
-              required: selectedAuthor ? false : true,
-              type: "email",
-              message: "Please enter a valid email address",
+              required: true,
+              message: "Please enter the stock",
             },
           ]}
         >
@@ -116,24 +137,74 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
         </Form.Item>
 
         <Form.Item
-          label="Mobile Number"
-          name="mobileNumber"
+          label="Product Type"
+          name="prodType"
           rules={[
             {
-              required: selectedAuthor ? false : false,
-              message: "Please enter the mobile number",
-            },
-            {
-              pattern: /^[0-9]*$/,
-              message: "Please enter a valid mobile number",
-            },
-            {
-              len: 10,
-              message: "Mobile number must be exactly 10 digits",
+              required: true,
+              message: "Please enter the product type",
             },
           ]}
         >
           <Input className="w-full py-2 px-4 border border-gray-900 rounded" />
+        </Form.Item>
+
+        <Form.Item
+          label="Selling Price"
+          name="sellingPrice"
+          rules={[
+            {
+              required: true,
+              message: "Please enter the selling price",
+            },
+          ]}
+        >
+          <Input className="w-full py-2 px-4 border border-gray-900 rounded" />
+        </Form.Item>
+
+        <Form.Item
+          label="Cost Price"
+          name="costPrice"
+          rules={[
+            {
+              required: true,
+              message: "Please enter the cost price",
+            },
+          ]}
+        >
+          <Input className="w-full py-2 px-4 border border-gray-900 rounded" />
+        </Form.Item>
+
+        <Form.Item
+          label="File"
+          name="file"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
+            return e && e.fileList;
+          }}
+          rules={[
+            {
+              required: true,
+              message: "Please upload a file",
+            },
+          ]}
+        >
+          <Upload.Dragger
+            name="file"
+            action="https://orderayo.onrender.com/products/upload-file"
+            headers={{
+              Authorization: `Bearer ${token}`,
+            }}
+            multiple={false}
+            beforeUpload={() => false} // Prevent default upload behavior
+          >
+            <p className="ant-upload-drag-icon">
+              Drag & drop or click to select file
+            </p>
+          </Upload.Dragger>
         </Form.Item>
 
         <Form.Item {...tailLayout}>
@@ -142,7 +213,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
               className="bg-blue-400 text-white font-bold px-4 rounded-full"
               type="default"
               htmlType="submit"
-              loading={isAddingAuthor}
+              loading={isAddingProduct}
             >
               Submit
             </Button>

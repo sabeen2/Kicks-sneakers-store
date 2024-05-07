@@ -11,7 +11,7 @@ import { makeExcelRequest } from "../../utils/http/make-excel-download";
 
 const {
   fetchAuthor,
-  addAuthor,
+  addProduct,
   deleteAuthor,
   updateAuthor,
   findAuthorById,
@@ -25,9 +25,9 @@ export const useFetchAuthor = () => {
   });
 };
 
-export const useAddAuthor = () => {
-  return useMutation((requestData: AuthorAddRequest) => {
-    return makeHttpRequest(addAuthor, {
+export const useAddProduct = () => {
+  return useMutation((requestData: any) => {
+    return makeHttpRequest(addProduct, {
       requestData,
     });
   });

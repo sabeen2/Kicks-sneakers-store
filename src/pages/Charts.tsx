@@ -12,19 +12,19 @@ import { useFetchTransaction } from "../api/order/queries";
 import { useFetchMember } from "../api/members/queries";
 import { useFetchAuthor } from "../api/product/queries";
 import { useFetchCategory } from "../api/category/queries";
-import { useFetchBook } from "../api/book/queries";
+// import { useFetchBook } from "../api/book/queries";
 
 const Charts: React.FC = () => {
   const { data: memberData } = useFetchMember();
   const { data: authorData } = useFetchAuthor();
   const { data: categoryData } = useFetchCategory();
-  const { data: bookData } = useFetchBook();
+  // const { data: bookData } = useFetchBook();
   const { data: transactionData } = useFetchTransaction();
 
   const totalMembers = memberData?.length || 0;
   const totalAuthors = authorData?.length || 0;
   const totalCategories = categoryData?.length || 0;
-  const totalBooks = bookData?.length || 0;
+  // const totalBooks = bookData?.length || 0;
 
   let bookFrequency: { [key: string]: number } = {};
   let totalRentDuration = 0;
@@ -127,7 +127,7 @@ const Charts: React.FC = () => {
         <Col span={4}>
           <Card className="bg-pink-200 hover:bg-pink-300 shadow-lg rounded-lg p-4">
             <BookOutlined className="text-6xl text-pink-500 mx-auto" />
-            <p className="text-4xl font-bold text-center">{totalBooks}</p>
+            {/* <p className="text-4xl font-bold text-center">{totalBooks}</p> */}
             <p className="text-black mt-2 font-semibold text-center">
               Total Books
             </p>

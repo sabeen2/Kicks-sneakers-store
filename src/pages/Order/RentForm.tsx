@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -15,8 +15,9 @@ import {
   useupdateTransaction,
 } from "../../api/order/queries";
 import { useFetchMember } from "../../api/members/queries";
-import { useFetchBook } from "../../api/book/queries";
+
 import dayjs from "dayjs";
+import axios from "axios";
 
 const layout = {
   labelCol: { span: 8 },
@@ -28,6 +29,11 @@ const tailLayout = {
 };
 
 interface TransactionDataType {
+  orderId: any;
+  quantity: any;
+  productId: any;
+  customerContact: any;
+  customerName: any;
   id: number;
   bookName: string;
   bookId: number;
@@ -52,29 +58,30 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
 }) => {
   const { mutate: addTransaction, isLoading: isAddingTransaction } =
     useAddTransaction();
-  const { mutate: editTransaction } = useupdateTransaction();
+  // const { mutate: editTransaction } = useupdateTransaction();
+  const [products, setProducts] = useState([]);
 
   const onFinish = (values: any) => {
+    console.log(values);
     let payload: any = {
-      bookId: values.bookId,
-      fromDate: values.fromDate,
-      toDate: values.toDate,
-      rentType: "RENT",
-      Fk_member_id: values.Fk_member_id,
+      customerName: values.customerName,
+      customerContact: values.customerContact,
+      orderItems: [
+        {
+          productId: values.productId,
+          quantity: values.quantity,
+        },
+      ],
     };
     if (selectedTransaction) {
       payload = {
         ...payload,
-        id: selectedTransaction.id,
-        bookName: selectedTransaction.bookId,
-        memberName: selectedTransaction.Fk_member_id,
-        rentType: undefined,
-        fromDate: undefined,
+        orderId: selectedTransaction.orderId,
       };
     }
     selectedTransaction
-      ? editTransaction(payload, {
-          onSuccess: (data) => {
+      ? addTransaction(payload, {
+          onSuccess: (data: any) => {
             message.success(`Edited transaction Sucessfully:  ${data}`);
             onSucess();
           },
@@ -97,16 +104,17 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
   useEffect(() => {
     if (selectedTransaction) {
       form.setFieldsValue({
-        id: selectedTransaction.id,
-        bookName: selectedTransaction.bookName,
-        toDate: dayjs(selectedTransaction.toDate).format("YYYY-MM-DD"),
-        rentType: selectedTransaction.rentType,
-        memberName: selectedTransaction.memberName,
+        customerName: selectedTransaction.customerName,
+        customerContact: selectedTransaction.customerContact,
+        orderItems: [
+          {
+            productId: selectedTransaction.productId,
+            quantity: selectedTransaction.quantity,
+          },
+        ],
       });
     }
   }, [selectedTransaction, form]);
-
-  const { data: bookData } = useFetchBook();
 
   const { data: memberData } = useFetchMember();
 
@@ -123,6 +131,28 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
     }
   };
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("bookRental");
+        const response = await axios.post(
+          "https://orderayo.onrender.com/products/get-all-products",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              accept: "*/*",
+            },
+          }
+        );
+        console.log("Fetched products:", response.data.data.content);
+        setProducts(response.data.data.content);
+      } catch (error) {}
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <div className="bg-white p-6 rounded">
       <Form
@@ -133,103 +163,50 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
         style={{ maxWidth: 600 }}
       >
         <Form.Item
-          label="Book"
-          name="bookId"
-          rules={[
-            {
-              required: selectedTransaction ? false : true,
-              message: "Please select a book",
-            },
-          ]}
+          label="Customer Name"
+          name="customerName"
+          rules={[{ required: true, message: "Please enter customer name" }]}
+        >
+          <Input className="w-full" />
+        </Form.Item>
+        <Form.Item
+          label="Customer Contact"
+          name="customerContact"
+          rules={[{ required: true, message: "Please enter customer contact" }]}
+        >
+          <Input className="w-full" />
+        </Form.Item>
+        <Form.Item
+          label="Product"
+          name="productId"
+          rules={[{ required: true, message: "Please select a product" }]}
         >
           <Select
             className="w-full"
-            placeholder="Select Book"
-            options={bookData?.map((book: { id: any; name: any }) => ({
-              value: parseInt(book.id),
-              label: book.name,
+            placeholder="Select Product"
+            options={products.map((product: any) => ({
+              value: product.prodid,
+              label: product.prodname.value,
             }))}
           />
         </Form.Item>
         <Form.Item
-          label="Number of Days"
-          name="numberOfDays"
-          rules={[
-            {
-              required: selectedTransaction ? false : true,
-              message: "Please enter the number of days",
-            },
-          ]}
+          label="Quantity"
+          name="quantity"
+          rules={[{ required: true, message: "Please enter quantity" }]}
         >
-          <InputNumber className="w-full" min={0} onChange={calculateToDate} />
+          <InputNumber className="w-full" />
         </Form.Item>
-
-        <Form.Item
-          label="From Date"
-          name="fromDate"
-          rules={[
-            {
-              required: selectedTransaction ? false : true,
-              message: "Please select from date",
-            },
-          ]}
-          style={{ display: "none" }}
-        >
-          <Input
-            type="date"
-            className="w-full py-2 px-4 border border-gray-900 rounded"
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Return Date"
-          name="toDate"
-          rules={[
-            {
-              required: selectedTransaction ? false : true,
-              message: "Please select valid Number of days above",
-            },
-          ]}
-        >
-          <Input
-            disabled={true}
-            className="w-full py-2 px-4 border border-gray-900 rounded"
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Member"
-          name="Fk_member_id"
-          rules={[
-            {
-              required: selectedTransaction ? false : true,
-              message: "Please select a member",
-            },
-          ]}
-        >
-          <Select
-            className="w-full"
-            placeholder="Select Member"
-            options={memberData?.map(
-              (member: { memberid: any; name: any }) => ({
-                value: parseInt(member.memberid),
-                label: member.name,
-              })
-            )}
-          />
-        </Form.Item>
-
         <Form.Item {...tailLayout}>
           <Space>
             <Button
+              loading={isAddingTransaction}
               className="bg-blue-400 text-white font-bold px-4 rounded-full"
               type="default"
               htmlType="submit"
-              loading={isAddingTransaction}
             >
               Submit
             </Button>
-
             <Button
               className="border border-gray-900 py-1 px-5 rounded-full"
               htmlType="button"

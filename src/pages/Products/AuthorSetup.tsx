@@ -1,425 +1,140 @@
-import React, { useEffect, useState } from "react";
-import {
-  Space,
-  Table,
-  Button,
-  Drawer,
-  message,
-  Popconfirm,
-  Form,
-  Input,
-  Upload,
-  Modal,
-  Breadcrumb,
-} from "antd";
-import type { TableProps } from "antd";
-import {
-  DownloadOutlined,
-  UploadOutlined,
-  AppstoreAddOutlined,
-  ProductOutlined,
-  DashboardOutlined,
-} from "@ant-design/icons";
-import { InboxOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
-
-const { Dragger } = Upload;
-
+import React, { useState, useEffect } from "react";
+import { Button, Card, Drawer, Form } from "antd";
+import axios from "axios";
 import CreateAuthor from "./CreateAuthor";
+import lol from "../../assets/image.png";
 
-import {
-  useFetchAuthor,
-  useDeleteAuthor,
-  useFindAuthorById,
-  useDownloadAuthorDetails,
-  useUploadAuthorDetails,
-} from "../../api/product/queries";
-
-interface AuthorDataType {
-  authorId: string;
-  name: string;
-  email: string;
-  mobileNumber: string;
-}
-
-const AuthorSetup: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const [selectedAuthor, setSelectedAuthor] = useState<AuthorDataType | any>(
-    null
-  );
-  const [findTheAuthor, setFindTheAuthor] = useState<AuthorDataType | any>(
-    null
-  );
-  const [findByName, setFindByName] = useState<AuthorDataType | any>(null);
-  const [inputValueIsNumber, setInputValueIsNumber] = useState<boolean>(false);
-  const [searchText, setSearchText] = useState<string>("");
+const ProductList: React.FC = () => {
+  const [products, setProducts] = useState<any[]>([]);
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const [inputForm] = Form.useForm();
-  const [uploadForm] = Form.useForm();
-
-  const [searchedAuthorId, setSearchedAuthorId] = useState<
-    AuthorDataType | any
-  >("");
-  const [page, setPage] = React.useState(1);
-
-  const columns: TableProps<AuthorDataType>["columns"] = [
-    {
-      title: "SN",
-      dataIndex: "index",
-      key: "index",
-      render: (_, __, index) => (page - 1) * 7 + index + 1,
-      sorter: (a, b) => {
-        const numA = parseInt(a.authorId, 10);
-        const numB = parseInt(b.authorId, 10);
-        return numA - numB;
-      },
-      sortDirections: ["descend"],
-      defaultSortOrder: "ascend",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Mobile",
-      dataIndex: "mobileNumber",
-      key: "mobileNumber",
-      render: (mobileNumber) => parseFloat(mobileNumber),
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button type="default" onClick={() => showEditDrawer(record)}>
-            Edit
-          </Button>
-          <Popconfirm
-            title="Are you sure you want to delete this author?"
-            onConfirm={() => handleDelete(record.authorId)}
-            okText="Yes"
-            cancelText="No"
-            okButtonProps={{ danger: true }}
-          >
-            <Button danger>Delete</Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
-  const showEditDrawer = (author: AuthorDataType) => {
-    form.setFieldsValue(author);
-    setSelectedAuthor(author);
-    setOpen(true);
-  };
 
   const showDrawer = () => {
-    setOpen(true);
+    setDrawerVisible(true);
   };
 
-  const onClose = () => {
-    form.resetFields();
-    setOpen(false);
-    refetchAuthor();
-    setSelectedAuthor(null);
-    setSearchedAuthorId(searchedAuthorId);
+  const closeDrawer = () => {
+    setDrawerVisible(false);
   };
 
-  const { mutate: deleteThisAuthor } = useDeleteAuthor();
-
-  const handleDelete = (authorID: any) => {
-    deleteThisAuthor(authorID, {
-      onSuccess: (data) => {
-        message.success(`Deleted author Successfully ${data}`);
-        setFindTheAuthor(null);
-        refetchAuthor();
-      },
-    });
-  };
-
-  const handleDownloadAuthorDetails = () => {
-    downloadAuthors(undefined, {
-      onSuccess: (data) => {
-        const blob = new Blob([data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "author_details.xlsx";
-        link.click();
-      },
-      onError: (data) => {
-        message.error(`Failed to Download: ${data}`);
-      },
-    });
-  };
-
-  const {
-    data: authorData,
-    isLoading: isLoadingAuthorData,
-    refetch: refetchAuthor,
-  } = useFetchAuthor();
-
-  const { mutate: downloadAuthors } = useDownloadAuthorDetails();
-
-  const {
-    data: findAuthor,
-    refetch: refetchFindAuthor,
-    isError: errorFindById,
-  } = useFindAuthorById(searchedAuthorId);
-
-  const searchById = (values: any) => {
-    setSearchedAuthorId(values.authorId.trim());
-  };
-
-  const handleNameChange = (event: any) => {
-    if (event.target.value === "") {
-      setFindTheAuthor(null);
-      setSearchedAuthorId("");
-      setInputValueIsNumber(false);
-    } else if (!isNaN(event.target.value)) {
-      setInputValueIsNumber(true);
-    }
-    setSearchText(event.target.value.trim());
+  const onSuccessAdd = () => {
+    closeDrawer();
   };
 
   useEffect(() => {
-    const searchedAuthors = authorData?.filter((author: AuthorDataType) => {
-      return Object.values(author).some((value) =>
-        String(value).toLowerCase().includes(searchText.toLowerCase())
-      );
-    });
-    setFindByName(searchedAuthors);
-  }, [searchText, authorData]);
-
-  useEffect(() => {
-    if (searchedAuthorId) {
-      if (errorFindById) {
-        // message.error("ID doesnt Exist");
-        setFindTheAuthor(null);
-      } else {
-        setFindTheAuthor(findAuthor);
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("bookRental");
+        const response = await axios.post(
+          "https://orderayo.onrender.com/products/get-all-products",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              accept: "*/*",
+            },
+          }
+        );
+        setProducts(response.data.data.content);
+      } catch (error) {
+        console.error("Error fetching products:", error);
       }
-    }
-  }, [searchedAuthorId, refetchFindAuthor, findAuthor, errorFindById]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-  const [fileList, setFileList] = useState<any[]>([]);
-  const { mutate: uploadAuthor } = useUploadAuthorDetails();
-
-  const props: UploadProps = {
-    name: "file",
-    fileList: fileList,
-    action: "",
-    beforeUpload: (file: File) => {
-      const isExcel =
-        file.type === "application/vnd.ms-excel" ||
-        file.type ===
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      if (!isExcel) {
-        message.error("You can only upload Excel files!");
-        return false;
-      }
-      setFileList([file]);
-      onFinish(file);
-      return false;
-    },
-    onRemove: () => {
-      setFileList([]);
-    },
-  };
-
-  const onFinish = (e: any) => {
-    let payload = {
-      file: e.file.file,
     };
 
-    uploadAuthor(payload, {
-      onSuccess: () => {
-        message.success("Sucessfully uploaded");
-        setIsModalOpen(false);
-        refetchAuthor();
-      },
-      onError: (data) => {
-        message.error(`Failed ${data}`);
-      },
-    });
-  };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const token = localStorage.getItem("bookRental");
+        const updatedProducts = await Promise.all(
+          products.map(async (product) => {
+            const response = await axios.get(
+              `https://orderayo.onrender.com/products/get-image-by-id?id=${product.prodid}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  accept: "*/*",
+                },
+                responseType: "blob", // Set responseType to 'blob' to receive Blob response
+              }
+            );
+
+            const blob = new Blob([response.data], {
+              type: response.headers["content-type"],
+            });
+            const imageUrl = URL.createObjectURL(blob); // Convert Blob to data URL
+
+            return { ...product, imageUrl };
+          })
+        );
+        setProducts(updatedProducts);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    // Fetch images only if products exist
+    if (products.length > 0) {
+      fetchImages();
+    }
+  }, [products]); // Fetch images whenever products change
 
   return (
-    <div className="flex-grow mt-5 max-h-96 mx-auto container">
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h2 className="text-xl font-bold">All Products</h2>
-          <Breadcrumb
-            separator={<span style={{ color: "black" }}>/</span>}
-            className="bg-indigo-100 my-4 rounded-lg p-2 text-xs inline-flex text-black"
-          >
-            <Breadcrumb.Item>
-              <DashboardOutlined />
-              <span>Dashboard</span>
-            </Breadcrumb.Item>
-
-            <Breadcrumb.Item>
-              <ProductOutlined />
-              <span>All Products</span>
-            </Breadcrumb.Item>
-          </Breadcrumb>
-        </div>
-
-        <button
-          className="w-[20vh] bg-black text-white font-bold py-1 px-4 hover:bg-gray-600 rounded-md transform hover:scale-105 hover:shadow-md"
+    <div className="mx-auto container">
+      <div className="flex justify-end mb-6">
+        <Button
+          className="bg-black text-white font-semibold"
           onClick={showDrawer}
         >
-          <AppstoreAddOutlined className="align-middle mr-2" />
           Add Products
-        </button>
-
-        <Drawer
-          className="flex"
-          width={800}
-          autoFocus
-          title={selectedAuthor ? "Edit Product" : "Add Product"}
-          onClose={onClose}
-          open={open}
-        >
-          <div className="flex-auto">
-            <CreateAuthor
-              selectedAuthor={selectedAuthor}
-              form={form}
-              onSucess={onClose}
-            />
+        </Button>
+      </div>
+      <div className="flex flex-grow flex-wrap gap-4">
+        {products.map((product) => (
+          <div
+            key={product.prodid}
+            className=" overflow-hidden shadow-md bg-white rounded-2xl w-[vh] "
+          >
+            <div className="aspect-w-4 aspect-h-3 px-4 ">
+              <img
+                src={product.image || lol}
+                alt={` ${product.prodname.value}`}
+                className="object-cover w-[15rem]"
+              />
+              <h3 className=" uppercase text-lg font-semibold mb-2">
+                {product.prodname.value}
+              </h3>
+            </div>
+            <div className="p-4">
+              <p className="text-gray-600 mb-2"> TYPE:{product.prodtype}</p>
+              {/* <p className="text-gray-600 mb-2">Product ID: {product.prodid}</p> */}
+              <p className="text-gray-600 mb-2">
+                Available Stock: {product.availablestock}
+              </p>
+              <p className="text-gray-600 mb-2">
+                Cost Price: NRP {product.costprice}
+              </p>
+              <p className="text-gray-600 mb-2">
+                Selling Price: NRP {product.sellingprice}
+              </p>
+              {/* <p className="text-gray-600">Modified By: {product.modifiedby}</p> */}
+            </div>
           </div>
-        </Drawer>
+        ))}
       </div>
-
-      <div className=" flex flex-wrap items-center">
-        <Form
-          form={inputForm}
-          onFinish={searchById}
-          className="flex items-center mb-0"
-        >
-          <Form.Item name="authorId" className="mr-2 w-50">
-            <Input
-              placeholder="Search"
-              value={
-                searchedAuthorId
-                  ? searchedAuthorId
-                  : searchText
-                  ? searchText
-                  : ""
-              }
-              onChange={handleNameChange}
-              className="border-2 border-blue-500 focus:border-blue-700 rounded-md  outline-none font-extrabold"
-            />
-          </Form.Item>
-
-          {inputValueIsNumber && (
-            <Form.Item className="">
-              <Button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2  rounded-lg"
-                type="default"
-                htmlType="submit"
-              >
-                Search By Id ??
-              </Button>
-            </Form.Item>
-          )}
-        </Form>
-      </div>
-      <Table
-        columns={columns}
-        dataSource={
-          findTheAuthor ? [findTheAuthor] : findByName ? findByName : authorData
-        }
-        loading={isLoadingAuthorData}
-        rowKey="authorId"
-        pagination={{
-          pageSize: 7,
-          responsive: true,
-          onChange(current) {
-            setPage(current);
-          },
-        }}
-      />
-
-      <Button
-        className=" mb-4  bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
-        type="default"
-        onClick={handleDownloadAuthorDetails}
-        icon={<DownloadOutlined />}
+      <Drawer
+        title="Add Product"
+        placement="right"
+        onClose={closeDrawer}
+        visible={drawerVisible}
+        width={400}
       >
-        Download Author Details
-      </Button>
-
-      <Button
-        className="ml-4 bg-blue-500  text-white font-bold px-2 rounded"
-        icon={<UploadOutlined />}
-        onClick={showModal}
-      >
-        Upload Author Data in Excel
-      </Button>
-
-      <Modal
-        footer
-        title="Upload Author Data"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Form
-          form={uploadForm}
-          onFinish={onFinish}
-          className="flex flex-col justify-between h-full"
-        >
-          <Form.Item name="file" className="mb-4">
-            <Dragger name="file" {...props}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag file to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Please note: Ensure that you only upload Excel files, and ensure
-                that your Excel file's columns are properly formatted. Thank
-                you..
-              </p>
-            </Dragger>
-          </Form.Item>
-          <Form.Item>
-            <Button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2  rounded-lg mt-2 mb-0  absolute left-52"
-              type="default"
-              htmlType="submit"
-            >
-              Upload
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        <CreateAuthor onSucess={onSuccessAdd} form={form} />
+      </Drawer>
     </div>
   );
 };
 
-export default AuthorSetup;
+export default ProductList;

@@ -47,7 +47,7 @@ export const useFetchTransaction = () => {
 };
 
 export const useAddTransaction = () => {
-  return useMutation((requestData: TransactionAddRequest) => {
+  return useMutation((requestData: any) => {
     return makeHttpRequest(addTransaction, {
       requestData,
     });
