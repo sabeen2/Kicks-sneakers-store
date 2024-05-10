@@ -6,7 +6,7 @@ import {
 
 const transaction = {
   fetchAllTransaction: {
-    controllerName: `orders/get-orders`,
+    controllerName: `orders/get-orders-history`,
     queryKeyName: `FETCH_ALL`,
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,

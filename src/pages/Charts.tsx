@@ -2,14 +2,16 @@ import { Card, Table } from "antd";
 import { Link } from "react-router-dom";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
-import { useFetchTransaction } from "../api/order/queries";
+import { fetchOrderHistory, useFetchTransaction } from "../api/order/queries";
 import { Doughnut } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 
 Chart.register(CategoryScale);
 
 export default function Charts() {
-  // const { data: activeOrders } = useFetchTransaction();
+  const { data: activeOrders } = useFetchTransaction();
+  const { data: getOrderHistory } = fetchOrderHistory();
+  console.log();
 
   // if (activeOrders && activeOrders.length > 0) {
   //   activeOrders.forEach((order: { products: any[] }) => {
@@ -21,14 +23,21 @@ export default function Charts() {
   //   });
   // }
 
-  // Static data for cards and table
   const cardData = [
-    { title: "Total Orders", value: "2,345", increase: "+12% from last month" },
-    { title: "Active Orders", value: "567", increase: "+5% from last month" },
     {
-      title: "Shipped Orders",
-      value: "1,789",
-      increase: "+8% from last month",
+      title: "Total Orders",
+      value: getOrderHistory?.length + activeOrders?.length,
+      // increase: "+12% from last month",
+    },
+    {
+      title: "Active Orders",
+      value: activeOrders?.length,
+      // increase: "+5% from last month",
+    },
+    {
+      title: "Dispatched Orders",
+      value: getOrderHistory?.length,
+      // increase: "+8% from last month",
     },
   ];
 
@@ -53,43 +62,43 @@ export default function Charts() {
     },
   ];
 
-  const tableData = [
-    {
-      order: "#3210",
-      customer: "Olivia Martin",
-      date: "February 20, 2022",
-      amount: "$42.25",
-      status: "Shipped",
-    },
-    {
-      order: "#3209",
-      customer: "Ava Johnson",
-      date: "January 5, 2022",
-      amount: "$74.99",
-      status: "Paid",
-    },
-    {
-      order: "#3204",
-      customer: "Michael Johnson",
-      date: "August 3, 2021",
-      amount: "$64.75",
-      status: "Unfulfilled",
-    },
-    {
-      order: "#3203",
-      customer: "Lisa Anderson",
-      date: "July 15, 2021",
-      amount: "$34.50",
-      status: "Shipped",
-    },
-    {
-      order: "#3202",
-      customer: "Samantha Green",
-      date: "June 5, 2021",
-      amount: "$89.99",
-      status: "Paid",
-    },
-  ];
+  // const tableData = [
+  //   {
+  //     order: activeOrders?.orderId,
+  //     customer: "Olivia Martin",
+  //     date: "February 20, 2022",
+  //     amount: "$42.25",
+  //     status: "Shipped",
+  //   },
+  //   {
+  //     order: "#3209",
+  //     customer: "Ava Johnson",
+  //     date: "January 5, 2022",
+  //     amount: "$74.99",
+  //     status: "Paid",
+  //   },
+  //   {
+  //     order: "#3204",
+  //     customer: "Michael Johnson",
+  //     date: "August 3, 2021",
+  //     amount: "$64.75",
+  //     status: "Unfulfilled",
+  //   },
+  //   {
+  //     order: "#3203",
+  //     customer: "Lisa Anderson",
+  //     date: "July 15, 2021",
+  //     amount: "$34.50",
+  //     status: "Shipped",
+  //   },
+  //   {
+  //     order: "#3202",
+  //     customer: "Samantha Green",
+  //     date: "June 5, 2021",
+  //     amount: "$89.99",
+  //     status: "Paid",
+  //   },
+  // ];
 
   return (
     <>
@@ -101,9 +110,9 @@ export default function Charts() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{card.value}</div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {card.increase}
-              </p>
+              {/* <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {card.increase}
+                </p> */}
             </CardContent>
           </Card>
         ))}
@@ -152,16 +161,31 @@ export default function Charts() {
             <CardTitle>Recent Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table dataSource={tableData} pagination={false}>
-              <Table.Column title="Order" dataIndex="order" key="order" />
+            <Table dataSource={activeOrders} pagination={false}>
+              <Table.Column title="OrderID" dataIndex="orderId" key="orderId" />
               <Table.Column
-                title="Customer"
-                dataIndex="customer"
+                title="CustomerName"
+                dataIndex="customerName"
                 key="customer"
               />
-              <Table.Column title="Date" dataIndex="date" key="date" />
-              <Table.Column title="Amount" dataIndex="amount" key="amount" />
-              <Table.Column title="Status" dataIndex="status" key="status" />
+              <Table.Column
+                title="Order Date"
+                dataIndex="orderDate"
+                key="date"
+              />
+              <Table.Column
+                title="ProductName"
+                dataIndex="products"
+                render={(products) => {
+                  return products[0]?.productName;
+                }}
+                key="products"
+              />
+              <Table.Column
+                title="Total Amount"
+                dataIndex="total"
+                key="status"
+              />
             </Table>
           </CardContent>
         </Card>

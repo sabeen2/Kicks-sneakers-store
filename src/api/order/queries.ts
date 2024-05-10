@@ -38,6 +38,12 @@ export const useFetchAllTransaction = (
   );
 };
 
+export const fetchOrderHistory = () => {
+  return useQuery([fetchAllTransaction.queryKeyName], () => {
+    return makeHttpRequest(fetchAllTransaction);
+  });
+};
+
 export const useFetchTransaction = () => {
   return useQuery([fetchActiveTransaction.queryKeyName], () => {
     return makeHttpRequest(fetchActiveTransaction);
