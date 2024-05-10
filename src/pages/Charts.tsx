@@ -1,158 +1,262 @@
-import React from "react";
-import { Card, Col, Row, Divider } from "antd";
-import {
-  UserOutlined,
-  BookOutlined,
-  AuditOutlined,
-  DatabaseOutlined,
-  FieldTimeOutlined,
-} from "@ant-design/icons";
-import { Bar } from "@ant-design/charts";
+import { Card, Table } from "antd";
+import { Link } from "react-router-dom";
+import Chart from "chart.js/auto";
+import { CategoryScale } from "chart.js";
 import { useFetchTransaction } from "../api/order/queries";
-import { useFetchMember } from "../api/members/queries";
-import { useFetchAuthor } from "../api/product/queries";
-import { useFetchCategory } from "../api/category/queries";
-// import { useFetchBook } from "../api/book/queries";
+import { Doughnut } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 
-const Charts: React.FC = () => {
-  const { data: memberData } = useFetchMember();
-  const { data: authorData } = useFetchAuthor();
-  const { data: categoryData } = useFetchCategory();
-  // const { data: bookData } = useFetchBook();
-  const { data: transactionData } = useFetchTransaction();
+Chart.register(CategoryScale);
 
-  const totalMembers = memberData?.length || 0;
-  const totalAuthors = authorData?.length || 0;
-  const totalCategories = categoryData?.length || 0;
-  // const totalBooks = bookData?.length || 0;
+export default function Charts() {
+  // const { data: activeOrders } = useFetchTransaction();
 
-  let bookFrequency: { [key: string]: number } = {};
-  let totalRentDuration = 0;
-  let totalTransactions = 0;
+  // if (activeOrders && activeOrders.length > 0) {
+  //   activeOrders.forEach((order: { products: any[] }) => {
+  //     order.products.forEach((product) => {
+  //       const productType = product.productType;
+  //       console.log(productType);
+  //       // Do whatever you need with productType here
+  //     });
+  //   });
+  // }
 
-  if (transactionData && Array.isArray(transactionData)) {
-    transactionData.forEach(
-      (transaction: { bookName: any; fromDate: any; toDate: any }) => {
-        const { bookName, fromDate, toDate } = transaction;
-        const rentDuration =
-          new Date(toDate).getTime() - new Date(fromDate).getTime();
+  // Static data for cards and table
+  const cardData = [
+    { title: "Total Orders", value: "2,345", increase: "+12% from last month" },
+    { title: "Active Orders", value: "567", increase: "+5% from last month" },
+    {
+      title: "Shipped Orders",
+      value: "1,789",
+      increase: "+8% from last month",
+    },
+  ];
 
-        if (!isNaN(rentDuration)) {
-          bookFrequency[bookName] = (bookFrequency[bookName] || 0) + 1;
-          totalRentDuration += rentDuration;
-          totalTransactions++;
-        }
-      }
-    );
-  }
+  const shoeData = [
+    {
+      name: "Nike Air Force 1",
+      description: "Classic sneaker",
+      price: "$89.99",
+      image: "/placeholder.svg",
+    },
+    {
+      name: "Adidas Ultraboost",
+      description: "Comfortable and stylish",
+      price: "$129.99",
+      image: "/placeholder.svg",
+    },
+    {
+      name: "Converse Chuck Taylor",
+      description: "Iconic canvas sneaker",
+      price: "$59.99",
+      image: "/placeholder.svg",
+    },
+  ];
 
-  const transactionStats = Object.keys(bookFrequency).map((book) => ({
-    bookName: book,
-    frequency: bookFrequency[book],
-  }));
+  const tableData = [
+    {
+      order: "#3210",
+      customer: "Olivia Martin",
+      date: "February 20, 2022",
+      amount: "$42.25",
+      status: "Shipped",
+    },
+    {
+      order: "#3209",
+      customer: "Ava Johnson",
+      date: "January 5, 2022",
+      amount: "$74.99",
+      status: "Paid",
+    },
+    {
+      order: "#3204",
+      customer: "Michael Johnson",
+      date: "August 3, 2021",
+      amount: "$64.75",
+      status: "Unfulfilled",
+    },
+    {
+      order: "#3203",
+      customer: "Lisa Anderson",
+      date: "July 15, 2021",
+      amount: "$34.50",
+      status: "Shipped",
+    },
+    {
+      order: "#3202",
+      customer: "Samantha Green",
+      date: "June 5, 2021",
+      amount: "$89.99",
+      status: "Paid",
+    },
+  ];
 
-  transactionStats.sort((a, b) => b.frequency - a.frequency);
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {cardData.map((card, index) => (
+          <Card key={index}>
+            <CardHeader>
+              <CardTitle>{card.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{card.value}</div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {card.increase}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <section className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Top Selling Shoes</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {shoeData.map((shoe, index) => (
+            <div
+              key={index}
+              className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-2"
+            >
+              <Link className="absolute inset-0 z-10" to="#">
+                <span className="sr-only">View</span>
+              </Link>
+              <img
+                alt={`Shoe ${index + 1}`}
+                className="object-cover w-full h-48 group-hover:opacity-50 transition-opacity"
+                height={300}
+                src={shoe.image}
+                style={{ aspectRatio: "300/300", objectFit: "cover" }}
+                width={300}
+              />
+              <div className="bg-white p-4 dark:bg-gray-950">
+                <h3 className="font-bold text-lg">{shoe.name}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {shoe.description}
+                </p>
+                <h4 className="font-semibold text-xl">{shoe.price}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Sales Graph</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <LineChart />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Orders</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table dataSource={tableData} pagination={false}>
+              <Table.Column title="Order" dataIndex="order" key="order" />
+              <Table.Column
+                title="Customer"
+                dataIndex="customer"
+                key="customer"
+              />
+              <Table.Column title="Date" dataIndex="date" key="date" />
+              <Table.Column title="Amount" dataIndex="amount" key="amount" />
+              <Table.Column title="Status" dataIndex="status" key="status" />
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+}
 
-  const topBooks = transactionStats.slice(0, 5);
+function CardHeader({ children }: any) {
+  return <div className="flex items-center justify-between">{children}</div>;
+}
 
-  const millisecondsInADay = 1000 * 60 * 60 * 24;
-  const averageRentDuration =
-    totalTransactions > 0
-      ? Math.ceil(totalRentDuration / (totalTransactions * millisecondsInADay))
-      : 0;
+function CardTitle({ children }: any) {
+  return <h3 className="font-bold">{children}</h3>;
+}
 
-  const barData = topBooks.map((book) => ({
-    bookName: book.bookName,
-    frequency: book.frequency,
-  }));
+function CardContent({ children }: any) {
+  return <div className="p-4">{children}</div>;
+}
 
-  const barConfig = {
-    data: barData,
-    xField: "bookName",
-    yField: "frequency",
-    label: {
-      position: "middle",
-      style: {
-        fill: "#FFFFFF",
-        fontSize: 200,
-        fontWeight: "bold",
+const LineChart: React.FC = () => {
+  const { data: activeOrders } = useFetchTransaction();
+  const [productTypeCounts, setProductTypeCounts] = useState<{
+    [key: string]: number;
+  }>({});
+
+  useEffect(() => {
+    if (activeOrders) {
+      const counts: { [key: string]: number } = {};
+
+      activeOrders.forEach((order: { products: any[] }) => {
+        order.products.forEach((product: { productType: string | number }) => {
+          counts[product.productType] = (counts[product.productType] || 0) + 1;
+        });
+      });
+
+      setProductTypeCounts(counts);
+    }
+  }, [activeOrders]);
+
+  const chartData = {
+    labels: Object.keys(productTypeCounts),
+    datasets: [
+      {
+        data: Object.values(productTypeCounts),
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"], // You can add more colors if needed
       },
-    },
-    xAxis: {
-      label: {
-        autoRotate: true,
-        style: {
-          fontSize: 26,
-          fontWeight: "bold",
-        },
-      },
-    },
-    meta: {
-      bookName: { alias: "Book Name" },
-      frequency: { alias: "Frequency" },
-    },
+    ],
   };
 
   return (
-    <div className="flex-grow mx-10 mt-10">
-      <Divider orientation="center">Stats</Divider>
-      <Row gutter={16} justify="space-around">
-        <Col span={4}>
-          <Card className="bg-blue-200 hover:bg-blue-300 shadow-lg rounded-lg p-4">
-            <UserOutlined className="text-6xl text-blue-500 mx-auto" />
-            <p className="text-4xl font-bold text-center">{totalMembers}</p>
-            <p className="text-black mt-2 font-semibold text-center">
-              Total Members
-            </p>
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card className="bg-green-200 hover:bg-green-300 shadow-lg rounded-lg p-4">
-            <AuditOutlined className="text-6xl text-green-500 mx-auto" />
-            <p className="text-4xl font-bold text-center">{totalAuthors}</p>
-            <p className="text-black mt-2 font-semibold text-center">
-              Total Authors
-            </p>
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card className="bg-yellow-200 hover:bg-yellow-300 shadow-lg rounded-lg p-4">
-            <DatabaseOutlined className="text-6xl text-yellow-500 mx-auto" />
-            <p className="text-4xl font-bold text-center">{totalCategories}</p>
-            <p className="text-black mt-2 font-semibold text-center">
-              Total Categories
-            </p>
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card className="bg-pink-200 hover:bg-pink-300 shadow-lg rounded-lg p-4">
-            <BookOutlined className="text-6xl text-pink-500 mx-auto" />
-            {/* <p className="text-4xl font-bold text-center">{totalBooks}</p> */}
-            <p className="text-black mt-2 font-semibold text-center">
-              Total Books
-            </p>
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card className="bg-purple-200 hover:bg-purple-300 shadow-lg rounded-lg p-4">
-            <FieldTimeOutlined className="text-6xl text-purple-500 mx-auto" />
-            <p className="text-4xl font-bold text-center">
-              {averageRentDuration} days
-            </p>
-            <p className="text-black mt-2 font-semibold text-center">
-              Average Rent Duration
-            </p>
-          </Card>
-        </Col>
-      </Row>
-      <Divider orientation="center">Most Rented Books</Divider>
-      <Row gutter={16} justify="center">
-        <Col span={16}>
-          <Bar {...barConfig} />
-        </Col>
-      </Row>
+    <div className="w-full max-w-lg mx-auto">
+      <Doughnut data={chartData} />
     </div>
   );
 };
 
-export default Charts;
+//Line Graph code
+
+// const LineChart: React.FC = () => {
+//   const { data: activeOrders } = useFetchTransaction();
+//   const [productTypeCounts, setProductTypeCounts] = useState<{
+//     [key: string]: number;
+//   }>({});
+
+//   useEffect(() => {
+//     if (activeOrders) {
+//       const counts: { [key: string]: number } = {};
+
+//       activeOrders.forEach((order: { products: any[] }) => {
+//         order.products.forEach((product: { productType: string | number }) => {
+//           counts[product.productType] = (counts[product.productType] || 0) + 1;
+//         });
+//       });
+
+//       setProductTypeCounts(counts);
+//     }
+//   }, [activeOrders]);
+
+//   const chartData = {
+//     labels: Object.keys(productTypeCounts),
+//     datasets: [
+//       {
+//         label: "Product Type Counts",
+//         data: Object.values(productTypeCounts),
+//         fill: false,
+//         borderColor: "rgb(75, 192, 192)",
+//         tension: 0.1,
+//       },
+//     ],
+//   };
+
+//   return (
+//     <div className="w-full max-w-lg mx-auto">
+//       <Line data={chartData} />
+//     </div>
+//   );
+// };

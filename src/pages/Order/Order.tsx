@@ -27,7 +27,8 @@ import {
   useFindTransactionById,
   useDownloadTransactionDetails,
   useUploadTransactionDetails,
-  useupdateTransaction,
+  useGetBill,
+  useDeleteTransaction,
 } from "../../api/order/queries";
 
 // interface TransactionDataType {
@@ -134,7 +135,7 @@ const Order: React.FC = () => {
                 Are you sure you want to dispatch?
               </span>
             }
-            onConfirm={() => handleReturn(record.prodId)}
+            onConfirm={() => handleReturn(record.orderId)}
             okText={<span className=" w-10">Yes</span>}
             cancelText={<span className=" w-10">No</span>}
             okButtonProps={{ danger: true }}
@@ -142,6 +143,22 @@ const Order: React.FC = () => {
           >
             <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
               Dispatch
+            </button>
+          </Popconfirm>
+          <Popconfirm
+            title={
+              <span style={{ fontSize: "20px" }}>
+                Generating report will dispatch order as well, Are you sure?
+              </span>
+            }
+            onConfirm={() => handleGetBill(record.orderId)}
+            okText={<span className=" w-10">Yes</span>}
+            cancelText={<span className=" w-10">No</span>}
+            okButtonProps={{ danger: true }}
+            overlayStyle={{ width: "400px", height: "100px" }}
+          >
+            <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
+              Generate Bill
             </button>
           </Popconfirm>
         </Space>
@@ -166,24 +183,56 @@ const Order: React.FC = () => {
     setSearchedTransactionId(searchedTransactionId);
   };
 
-  const { mutate: returnTransaction } = useupdateTransaction();
+  const { mutate: dispatchOrder } = useDeleteTransaction();
 
-  const handleReturn = (transactionID: any) => {
-    let payload: any = {
-      id: transactionID,
-      rentType: "RETURN",
-    };
-    returnTransaction(payload, {
+  // const handleReturn = (transactionID: any) => {
+  //   let payload: any = {
+  //     id: transactionID,
+  //     // rentType: "RETURN",
+  //   };
+  //   returnTransaction(payload, {
+  //     onSuccess: () => {
+  //       message.success(`Returned Book Successfully `);
+  //       setFindTheTransaction(null);
+  //       refetchTransaction();
+  //     },
+  //     onError: (errorMsg: any) => {
+  //       message.error(errorMsg);
+  //     },
+  //   });
+  // };
+
+  const handleReturn = (orderID: any) => {
+    // console.log(orderID);
+    dispatchOrder(orderID, {
       onSuccess: () => {
-        message.success(`Returned Book Successfully `);
-        setFindTheTransaction(null);
-        refetchTransaction();
+        message.success("SuccessFully Dispached");
       },
-      onError: (errorMsg: any) => {
-        message.error(errorMsg);
+      onError: (data) => {
+        message.error(`Failed:  ${data}`);
       },
     });
   };
+
+  const { mutate: generateBill } = useGetBill();
+
+  const handleGetBill = (orderID: any) => {
+    generateBill(orderID, {
+      onSuccess: (data) => {
+        const blob = new Blob([data], {
+          type: "application/pdf",
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "bill.pdf";
+        link.click();
+      },
+      onError: (data) => {
+        message.error(`Failed to Download: ${data}`);
+      },
+    });
+  };
+  const { mutate: downloadTransactions } = useDownloadTransactionDetails();
 
   const handleDownloadTransactionDetails = () => {
     downloadTransactions(undefined, {
@@ -193,7 +242,7 @@ const Order: React.FC = () => {
         });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "transaction_details.xls";
+        link.download = "orderDetails.xls";
         link.click();
       },
       onError: (data) => {
@@ -207,8 +256,6 @@ const Order: React.FC = () => {
     isLoading: isLoadingTransactionData,
     refetch: refetchTransaction,
   } = useFetchTransaction();
-
-  const { mutate: downloadTransactions } = useDownloadTransactionDetails();
 
   const { data: findTransaction, refetch: refetchFindTransaction } =
     useFindTransactionById(searchedTransactionId);
@@ -404,11 +451,11 @@ const Order: React.FC = () => {
         onClick={handleDownloadTransactionDetails}
         icon={<DownloadOutlined />}
       >
-        Download Transaction Details
+        Download Order Details
       </Button>
 
       <Button
-        className="ml-4 bg-blue-500  text-white font-bold px-2 rounded"
+        className="ml-4 bg-blue-500  text-white font-bold px-2 rounded hidden"
         icon={<UploadOutlined />}
         onClick={showModal}
       >

@@ -27,16 +27,16 @@ const transaction = {
   },
 
   deleteTransaction: {
-    controllerName: `lib/transactions/delete-transaction`,
+    controllerName: `orders/dispatch-orders`,
     queryKeyName: `DELETE_TRANSACTION`,
     requestMethod: RequestMethodEnum.DELETE,
     requestAuthType: RequestAuthType.AUTH,
   },
 
-  updateTransaction: {
-    controllerName: `lib/transactions/update-transaction`,
+  getBill: {
+    controllerName: `orders/get-bill`,
     queryKeyName: `UPDATE_TRANSACTION`,
-    requestMethod: RequestMethodEnum.PUT,
+    requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
 
@@ -48,7 +48,7 @@ const transaction = {
   },
 
   downloadTransactionDetails: {
-    controllerName: `lib/transactions/download-transactions`,
+    controllerName: `orders/download-history`,
     queryKeyName: `DOWNLOAD_TRANSACTION`,
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,

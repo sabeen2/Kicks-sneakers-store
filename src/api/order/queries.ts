@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "react-query";
 
 import transaction from "./query-details";
 import { makeHttpRequest } from "../../utils/http/make-http-request";
-import { TransactionUpdateRequest } from "../../schema/transaction.schema";
 import { makeExcelRequest } from "../../utils/http/make-excel-download";
 import { CategoryUploadRequest } from "../../schema/category.schema";
 
@@ -11,7 +10,7 @@ const {
   fetchActiveTransaction,
   addTransaction,
   deleteTransaction,
-  updateTransaction,
+  getBill,
   findTransactionById,
   mailDueTransaction,
   downloadTransactionDetails,
@@ -63,10 +62,12 @@ export const useDeleteTransaction = () => {
   });
 };
 
-export const useupdateTransaction = () => {
-  return useMutation((requestData: TransactionUpdateRequest) => {
-    return makeHttpRequest(updateTransaction, {
-      requestData,
+export const useGetBill = () => {
+  return useMutation((orderID: any) => {
+    return makeHttpRequest(getBill, {
+      params: {
+        id: orderID,
+      },
     });
   });
 };

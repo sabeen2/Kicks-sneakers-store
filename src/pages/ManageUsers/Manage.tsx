@@ -238,6 +238,7 @@ const App: React.FC = () => {
           footer={null}
         >
           <Form
+            aria-autocomplete="none"
             form={addform}
             name="signup"
             initialValues={{ remember: true }}
@@ -246,11 +247,13 @@ const App: React.FC = () => {
           >
             <Form.Item<FieldType>
               name="username"
+              initialValue={null}
               rules={[
                 { required: true, message: "Please input your username!" },
               ]}
             >
               <Input
+                defaultValue={""}
                 placeholder="Username"
                 className="rounded-md mb-4 border focus:outline-none border-gray-900 focus:border-purple-500 px-3 py-2"
               />
@@ -276,7 +279,7 @@ const App: React.FC = () => {
                 placeholder="Select a role"
                 options={[
                   { value: "ADMIN", label: "Admin" },
-                  { value: "LIBRARIAN", label: "Librarian" },
+                  { value: "STAFF", label: "Staff" },
                 ]}
                 className="w-full border border-gray-900 rounded"
               />
