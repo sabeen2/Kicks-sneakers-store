@@ -3,6 +3,7 @@ import { Button, Drawer, Form } from "antd";
 import axios from "axios";
 import CreateAuthor from "./CreateAuthor";
 import lol from "../../assets/image.png";
+import { useFetchImage } from "../../api/product/queries";
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -44,42 +45,46 @@ const ProductList: React.FC = () => {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const token = localStorage.getItem("bookRental");
-        const updatedProducts = await Promise.all(
-          products.map(async (product) => {
-            const response = await axios.get(
-              `https://orderayo.onrender.com/products/get-image-by-id?id=${product.prodid}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  accept: "*/*",
-                },
-                responseType: "blob", // Set responseType to 'blob' to receive Blob response
-              }
-            );
+  const prodId: any = 2;
 
-            const blob = new Blob([response.data], {
-              type: response.headers["content-type"],
-            });
-            const imageUrl = URL.createObjectURL(blob); // Convert Blob to data URL
+  // useEffect(() => {
+  //   const fetchImages = async () => {
+  //     try {
+  //       const token = localStorage.getItem("bookRental");
+  //       const updatedProducts = await Promise.all(
+  //         products.map(async (product) => {
+  //           const response = await axios.get(
+  //             `https://orderayo.onrender.com/products/get-image-by-id?id=${prprodId?: anyprodId: anyoduct.prodid}`,
+  //             {
+  //               headers: {
+  //                 Authorization: `Bearer ${token}`,
+  //                 accept: "*/*",
+  //               },
+  //               responseType: "blob",
+  //             }
+  //           );
 
-            return { ...product, imageUrl };
-          })
-        );
-        setProducts(updatedProducts);
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
+  //           const blob = new Blob([response.data], {
+  //             type: response.headers["content-type"],
+  //           });
+  //           const imageUrl = URL.createObjectURL(blob);
 
-    // Fetch images only if products exist
-    if (products.length > 0) {
-      fetchImages();
-    }
-  }, [products]); // Fetch images whenever products change
+  //           return { ...product, imageUrl };
+  //         })
+  //       );
+  //       setProducts(updatedProducts);
+  //     } catch (error) {
+  //       console.error("Error fetching images:", error);
+  //     }
+  //   };
+
+  //   // Fetch images only if products exist
+  //   if (products.length > 0) {
+  //     fetchImages();
+  //   }
+  // }, [products]); // Fetch images whenever products change
+
+  const { data: imageData } = useFetchImage(prodId);
 
   return (
     <div className="mx-auto container">
@@ -99,7 +104,7 @@ const ProductList: React.FC = () => {
           >
             <div className="aspect-w-4 aspect-h-3 px-4 ">
               <img
-                src={product.image || lol}
+                src={product?.image || lol}
                 alt={` ${product.prodname.value}`}
                 className="object-cover w-[15rem]"
               />

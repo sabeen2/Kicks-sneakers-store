@@ -48,10 +48,10 @@ const author = {
     responseType: ResponseType.BLOB,
   },
 
-  handleAuthorDataUpload: {
-    controllerName: `lib/authors/export-to-db`,
-    queryKeyName: `UPLOAD_AUTHOR`,
-    requestMethod: RequestMethodEnum.POST,
+  getImage: {
+    controllerName: `products/get-image-by-id`,
+    queryKeyName: `GET_IMAGE`,
+    requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
 };

@@ -15,7 +15,7 @@ const {
   updateAuthor,
   findAuthorById,
   downloadAuthorDetails,
-  handleAuthorDataUpload,
+  getImage,
 } = author;
 
 export const useFetchAuthor = () => {
@@ -72,10 +72,12 @@ export const useDownloadAuthorDetails = () => {
   });
 };
 
-export const useUploadAuthorDetails = () => {
-  return useMutation((requestData: AuthorUploadRequest) => {
-    return makeExcelRequest(handleAuthorDataUpload, {
-      requestData,
+export const useFetchImage = () => {
+  return useQuery([getImage.queryKeyName], () => {
+    return makeHttpRequest(getImage, {
+      params: {
+        id: prodId,
+      },
     });
   });
 };

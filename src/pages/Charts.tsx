@@ -161,7 +161,7 @@ export default function Charts() {
             <CardTitle>Recent Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table dataSource={activeOrders} pagination={false}>
+            <Table dataSource={activeOrders} pagination={{ pageSize: 5 }}>
               <Table.Column title="OrderID" dataIndex="orderId" key="orderId" />
               <Table.Column
                 title="CustomerName"
