@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Drawer, Form, message, Card } from "antd";
+import { Button, Drawer, Form, message, Card, Pagination } from "antd";
 import CreateAuthor from "./CreateAuthor";
 import { useFetchAuthor, useGetAllProducts } from "../../api/product/queries";
 import ImageCard from "./imagePreview";
@@ -7,6 +7,9 @@ import ImageCard from "./imagePreview";
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+
   const [form] = Form.useForm();
   products;
 
@@ -63,25 +66,30 @@ const ProductList: React.FC = () => {
 
   // const { data: imageData } = useFetchImage(prodId);
   // const { data: imageBaseData } = useFetchImageBase(prodId);
-  const { mutate: getProducts } = useFetchAuthor();
+  const { data: productData } = useFetchAuthor({
+    row: pageSize,
+    page: page,
+  });
+
+  console.log(productData);
 
   // const imageFile = `data:image/jpeg;base64, ${imageBaseData}`;
 
-  const { data: allProductsData } = useGetAllProducts();
+  // const { data: allProductsData } = useGetAllProducts();
 
-  useEffect(() => {
-    getProducts(
-      {},
-      {
-        onSuccess: (resData) => {
-          setProducts(resData.content);
-        },
-        onError: (data) => {
-          message.error(`Failed to get products ${data}`);
-        },
-      }
-    );
-  }, []);
+  // useEffect(() => {
+  //   getProducts(
+  //     {},
+  //     {
+  //       onSuccess: (resData) => {
+  //         setProducts(resData.content);
+  //       },
+  //       onError: (data) => {
+  //         message.error(`Failed to get products ${data}`);
+  //       },
+  //     }
+  //   );
+  // }, []);
 
   // console.log({ products });
 
@@ -96,7 +104,7 @@ const ProductList: React.FC = () => {
         </Button>
       </div>
       <div className="grid grid-cols-5 gap-x-6 gap-y-6">
-        {allProductsData?.map((item: any, index: any) => (
+        {productData?.content?.map((item: any, index: any) => (
           <Card
             key={index}
             className=" bg-white rounded-lg shadow-md overflow-hidden "
@@ -106,8 +114,6 @@ const ProductList: React.FC = () => {
                 id={item.prodid || item.prodId}
                 key={item.prodid || item.prodId}
               />
-
-              <div>{item?.prodId || item?.prodid}</div>
 
               <div className="absolute top-2 right-0 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
                 {item?.prodtype || item?.prodType}
@@ -142,6 +148,16 @@ const ProductList: React.FC = () => {
           </Card>
         ))}
       </div>
+      <Pagination
+        pageSize={pageSize}
+        current={page}
+        onChange={(currentPage, row) => {
+          console.log(currentPage, row);
+          setPage(currentPage);
+        }}
+        total={productData?.totalElements}
+      />
+
       <Drawer
         title="Add Product"
         placement="right"

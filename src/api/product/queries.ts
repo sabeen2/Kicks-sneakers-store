@@ -17,12 +17,27 @@ const {
   getImageBase,
 } = author;
 
-export const useFetchAuthor = () => {
-  return useMutation((requestData: any) => {
-    return makeHttpRequest(fetchAuthor, {
-      requestData,
-    });
-  });
+// export const useFetchAuthor = () => {
+//   return useMutation((requestData: any) => {
+//     return makeHttpRequest(fetchAuthor, {
+//       requestData,
+//     });
+//   });
+// };
+
+export const useFetchAuthor = (requestData: any) => {
+  return useQuery(
+    [fetchAuthor.queryKeyName, requestData],
+    () =>
+      makeHttpRequest(fetchAuthor, {
+        requestData,
+      }),
+    {
+      // select: (data) => data?.data,
+      staleTime: 0,
+      enabled: !!(requestData.page && requestData.row),
+    }
+  );
 };
 
 export const useGetAllProducts = () => {
