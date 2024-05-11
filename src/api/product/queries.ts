@@ -79,9 +79,9 @@ export const useDownloadAuthorDetails = () => {
   });
 };
 
-export const useFetchImage = (myprodId: number) => {
+export const useFetchImage = (myprodId: any) => {
   return useQuery([getImage.queryKeyName, myprodId], () => {
-    return makeHttpRequest(getImage, {
+    return makeExcelRequest(getImage, {
       params: {
         id: myprodId,
       },
@@ -89,9 +89,9 @@ export const useFetchImage = (myprodId: number) => {
   });
 };
 
-export const useFetchImageBase = (prodId: number) => {
+export const useFetchImageBase = (prodId: any) => {
   return useQuery([getImageBase.queryKeyName, prodId], () => {
-    return makeHttpRequest(getImageBase, {
+    return makeExcelRequest(getImageBase, {
       params: {
         id: prodId,
       },

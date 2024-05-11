@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button, Drawer, Form, message, Image, Card } from "antd";
-import axios from "axios";
+import { Button, Drawer, Form, message, Card } from "antd";
 import CreateAuthor from "./CreateAuthor";
-import lol from "../../assets/image.png";
-import {
-  useFetchAuthor,
-  useFetchImage,
-  useFetchImageBase,
-  useGetAllProducts,
-} from "../../api/product/queries";
+import { useFetchAuthor, useGetAllProducts } from "../../api/product/queries";
 import ImageCard from "./imagePreview";
 
 const ProductList: React.FC = () => {
@@ -67,7 +60,6 @@ const ProductList: React.FC = () => {
 
   // const { data: imageData } = useFetchImage(prodId);
 
-  const prodId = 63;
   // const { data: imageData } = useFetchImage(prodId);
   // const { data: imageBaseData } = useFetchImageBase(prodId);
   const { mutate: getProducts } = useFetchAuthor();
@@ -105,7 +97,6 @@ const ProductList: React.FC = () => {
       <div className="grid grid-cols-5 gap-x-6 gap-y-6">
         {allProductsData?.map((item: any, index: any) => (
           <Card
-            // onLoad={(prodid) => console.log(prodid)}
             key={index}
             className=" bg-white rounded-lg shadow-md overflow-hidden "
           >
@@ -117,7 +108,7 @@ const ProductList: React.FC = () => {
 
               <div>{item?.prodId || item?.prodid}</div>
 
-              <div className="absolute top-2 right-2 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
+              <div className="absolute top-2 right-0 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
                 {item?.prodtype || item?.prodType}
               </div>
             </div>

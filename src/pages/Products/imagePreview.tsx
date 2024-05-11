@@ -1,16 +1,20 @@
 import { Image, Empty } from "antd";
-import { useFetchImage } from "../../api/product/queries";
+import { useFetchImageBase } from "../../api/product/queries";
+import sample from "../../assets/lol.png";
 
 const ImageCard = ({ id }: { id: any }) => {
-  const { data: getImageData } = useFetchImage(Number(id));
-  console.log(getImageData);
+  const { data: getImageData } = useFetchImageBase(id);
 
   return (
     <>
       {!getImageData ? (
-        <Empty description="" imageStyle={{ width: 40, height: 40 }} />
+        <Image width={300} height={200} src={sample} />
       ) : (
-        <Image width={50} height={40} src={getImageData} />
+        <Image
+          width={300}
+          height={200}
+          src={`data:image/jpeg;base64,${getImageData?.data}`}
+        />
       )}
     </>
   );
