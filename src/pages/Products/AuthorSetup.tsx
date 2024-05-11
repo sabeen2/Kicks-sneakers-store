@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Button, Drawer, Form, message, Card, Pagination } from "antd";
+import React, { useState } from "react";
+import { Button, Drawer, Form, Card, Pagination } from "antd";
 import CreateAuthor from "./CreateAuthor";
-import { useFetchAuthor, useGetAllProducts } from "../../api/product/queries";
+import { useFetchAuthor } from "../../api/product/queries";
 import ImageCard from "./imagePreview";
 
 const ProductList: React.FC = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  // const [products, setProducts] = useState<any[]>([]);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
-
+  setPageSize;
   const [form] = Form.useForm();
-  products;
 
   const showDrawer = () => {
     setDrawerVisible(true);
