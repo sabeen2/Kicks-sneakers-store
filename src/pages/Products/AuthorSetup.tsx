@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Button, Drawer, Form } from "antd";
+import { Button, Drawer, Form, message, Image, Card } from "antd";
 import axios from "axios";
 import CreateAuthor from "./CreateAuthor";
 import lol from "../../assets/image.png";
-import { useFetchImage } from "../../api/product/queries";
+import {
+  useFetchAuthor,
+  useFetchImage,
+  useFetchImageBase,
+  useGetAllProducts,
+} from "../../api/product/queries";
+import ImageCard from "./imagePreview";
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -21,31 +27,6 @@ const ProductList: React.FC = () => {
   const onSuccessAdd = () => {
     closeDrawer();
   };
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem("bookRental");
-        const response = await axios.post(
-          "https://orderayo.onrender.com/products/get-all-products",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              accept: "*/*",
-            },
-          }
-        );
-        setProducts(response.data.data.content);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  const prodId: any = 2;
 
   // useEffect(() => {
   //   const fetchImages = async () => {
@@ -84,7 +65,32 @@ const ProductList: React.FC = () => {
   //   }
   // }, [products]); // Fetch images whenever products change
 
-  const { data: imageData } = useFetchImage(prodId);
+  // const { data: imageData } = useFetchImage(prodId);
+
+  const prodId = 63;
+  // const { data: imageData } = useFetchImage(prodId);
+  // const { data: imageBaseData } = useFetchImageBase(prodId);
+  const { mutate: getProducts } = useFetchAuthor();
+
+  // const imageFile = `data:image/jpeg;base64, ${imageBaseData}`;
+
+  const { data: allProductsData } = useGetAllProducts();
+
+  useEffect(() => {
+    getProducts(
+      {},
+      {
+        onSuccess: (resData) => {
+          setProducts(resData.content);
+        },
+        onError: (data) => {
+          message.error(`Failed to get products ${data}`);
+        },
+      }
+    );
+  }, []);
+
+  // console.log({ products });
 
   return (
     <div className="mx-auto container">
@@ -96,37 +102,52 @@ const ProductList: React.FC = () => {
           Add Products
         </Button>
       </div>
-      <div className="flex flex-grow flex-wrap gap-4">
-        {products.map((product) => (
-          <div
-            key={product.prodid}
-            className=" overflow-hidden shadow-md bg-white rounded-2xl w-[vh] "
+      <div className="grid grid-cols-5 gap-x-6 gap-y-6">
+        {allProductsData?.map((item: any, index: any) => (
+          <Card
+            // onLoad={(prodid) => console.log(prodid)}
+            key={index}
+            className=" bg-white rounded-lg shadow-md overflow-hidden "
           >
-            <div className="aspect-w-4 aspect-h-3 px-4 ">
-              <img
-                src={product?.image || lol}
-                alt={` ${product.prodname.value}`}
-                className="object-cover w-[15rem]"
+            <div className="relative">
+              <ImageCard
+                id={item.prodid || item.prodId}
+                key={item.prodid || item.prodId}
               />
-              <h3 className=" uppercase text-lg font-semibold mb-2">
-                {product.prodname.value}
-              </h3>
+
+              <div>{item?.prodId || item?.prodid}</div>
+
+              <div className="absolute top-2 right-2 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
+                {item?.prodtype || item?.prodType}
+              </div>
             </div>
+
             <div className="p-4">
-              <p className="text-gray-600 mb-2"> TYPE:{product.prodtype}</p>
-              {/* <p className="text-gray-600 mb-2">Product ID: {product.prodid}</p> */}
-              <p className="text-gray-600 mb-2">
-                Available Stock: {product.availablestock}
-              </p>
-              <p className="text-gray-600 mb-2">
-                Cost Price: NRP {product.costprice}
-              </p>
-              <p className="text-gray-600 mb-2">
-                Selling Price: NRP {product.sellingprice}
-              </p>
-              {/* <p className="text-gray-600">Modified By: {product.modifiedby}</p> */}
+              <h3 className="text-base font-semibold mb-1">
+                {item?.prodname?.value || item?.prodName}
+              </h3>
+              <div className="flex items-center mb-2">
+                <span className="text-gray-500 mr-1 text-sm">In Stock:</span>
+                <span className="text-gray-900 font-medium text-sm">
+                  {item?.availablestock || item?.availableStock}
+                </span>
+              </div>
+              <div className="flex items-center mb-2">
+                <span className="text-gray-500 mr-1 text-sm">Cost Price:</span>
+                <span className="text-gray-900 font-medium text-sm">
+                  {item?.costprice || item?.costPrice}
+                </span>
+              </div>
+              <div className="flex items-center mb-2">
+                <span className="text-gray-500 mr-1 text-sm">
+                  Selling Price:
+                </span>
+                <span className="text-gray-900 font-medium text-sm">
+                  {item?.sellingprice || item?.sellingPrice}
+                </span>
+              </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
       <Drawer

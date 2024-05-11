@@ -2,25 +2,32 @@ import { useMutation, useQuery } from "react-query";
 
 import author from "./query-details";
 import { makeHttpRequest } from "../../utils/http/make-http-request";
-import {
-  AuthorUpdateRequest,
-  AuthorUploadRequest,
-} from "../../schema/author.schema";
+import { AuthorUpdateRequest } from "../../schema/author.schema";
 import { makeExcelRequest } from "../../utils/http/make-excel-download";
 
 const {
   fetchAuthor,
   addProduct,
+  fetchProuctsWithPagination,
   deleteAuthor,
   updateAuthor,
   findAuthorById,
   downloadAuthorDetails,
   getImage,
+  getImageBase,
 } = author;
 
 export const useFetchAuthor = () => {
-  return useQuery([fetchAuthor.queryKeyName], () => {
-    return makeHttpRequest(fetchAuthor);
+  return useMutation((requestData: any) => {
+    return makeHttpRequest(fetchAuthor, {
+      requestData,
+    });
+  });
+};
+
+export const useGetAllProducts = () => {
+  return useQuery([fetchProuctsWithPagination.queryKeyName], () => {
+    return makeHttpRequest(fetchProuctsWithPagination);
   });
 };
 
@@ -72,9 +79,19 @@ export const useDownloadAuthorDetails = () => {
   });
 };
 
-export const useFetchImage = () => {
-  return useQuery([getImage.queryKeyName], () => {
+export const useFetchImage = (myprodId: number) => {
+  return useQuery([getImage.queryKeyName, myprodId], () => {
     return makeHttpRequest(getImage, {
+      params: {
+        id: myprodId,
+      },
+    });
+  });
+};
+
+export const useFetchImageBase = (prodId: number) => {
+  return useQuery([getImageBase.queryKeyName, prodId], () => {
+    return makeHttpRequest(getImageBase, {
       params: {
         id: prodId,
       },

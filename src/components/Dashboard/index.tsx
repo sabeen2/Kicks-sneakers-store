@@ -123,7 +123,7 @@ const Dashboard: React.FC = () => {
         </AntHeader>
 
         <div className="flex flex-col md:flex-row  ">
-          <div className="">
+          <div className=" overflow-scroll">
             <Sidebar />
           </div>
           <div className="flex-1 p-4  overflow-auto 	">

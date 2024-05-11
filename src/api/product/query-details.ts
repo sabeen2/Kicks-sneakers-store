@@ -8,7 +8,14 @@ const author = {
   fetchAuthor: {
     controllerName: `products/get-all-products`,
     queryKeyName: `FETCH_PRODUCT`,
-    requestMethod: RequestMethodEnum.GET,
+    requestMethod: RequestMethodEnum.POST,
+    requestAuthType: RequestAuthType.AUTH,
+  },
+
+  fetchProuctsWithPagination: {
+    controllerName: `products/all-products-without-pagination`,
+    queryKeyName: `FETCH_ALLPRODUCT`,
+    requestMethod: RequestMethodEnum.POST,
     requestAuthType: RequestAuthType.AUTH,
   },
 
@@ -51,6 +58,13 @@ const author = {
   getImage: {
     controllerName: `products/get-image-by-id`,
     queryKeyName: `GET_IMAGE`,
+    requestMethod: RequestMethodEnum.GET,
+    requestAuthType: RequestAuthType.AUTH,
+  },
+
+  getImageBase: {
+    controllerName: `products/get-image-by-id-base64`,
+    queryKeyName: `GET_IMAGEBASE`,
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
