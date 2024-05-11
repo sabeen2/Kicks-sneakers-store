@@ -1,4 +1,4 @@
-import { Image, Empty } from "antd";
+import { Image } from "antd";
 import { useFetchImageBase } from "../../api/product/queries";
 import sample from "../../assets/lol.png";
 

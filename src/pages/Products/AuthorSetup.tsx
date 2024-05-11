@@ -8,6 +8,7 @@ const ProductList: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
+  products;
 
   const showDrawer = () => {
     setDrawerVisible(true);
