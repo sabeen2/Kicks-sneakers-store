@@ -48,8 +48,8 @@ const CreateOrder = () => {
       customerContact: values.customerContact,
       orderItems: [
         {
-          productId: values.productId,
-          quantity: values.quantity,
+          productId: [values.productId],
+          quantity: [values.quantity],
         },
       ],
     };
@@ -107,11 +107,12 @@ const CreateOrder = () => {
           rules={[{ required: true, message: "Please select a product" }]}
         >
           <Select
+            mode="multiple"
             className="w-full"
             placeholder="Select Product"
             options={products.map((product: any) => ({
-              value: product.prodid,
-              label: product.prodname.value,
+              value: [product.prodid],
+              label: [product.prodname.value],
             }))}
           />
         </Form.Item>

@@ -19,6 +19,20 @@ const transaction = {
     requestAuthType: RequestAuthType.AUTH,
   },
 
+  fetchBestSellers: {
+    controllerName: `orders/get-best-sellers`,
+    queryKeyName: `FETCH_SALESREPORT`,
+    requestMethod: RequestMethodEnum.POST,
+    requestAuthType: RequestAuthType.AUTH,
+  },
+
+  fetchSalesReport: {
+    controllerName: `orders/get-sales-report`,
+    queryKeyName: `FETCH_BEST`,
+    requestMethod: RequestMethodEnum.POST,
+    requestAuthType: RequestAuthType.AUTH,
+  },
+
   addTransaction: {
     controllerName: `orders/add-order`,
     queryKeyName: `ADD_TRANSACTION`,

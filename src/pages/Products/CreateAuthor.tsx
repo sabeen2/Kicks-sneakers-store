@@ -7,6 +7,7 @@ import {
   Space,
   message,
   Upload,
+  Select,
 } from "antd";
 import axios from "axios";
 
@@ -147,7 +148,15 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
             },
           ]}
         >
-          <Input className="w-full py-2 px-4 border border-gray-900 rounded" />
+          <Select
+            className="w-full py-2 px-4 border border-gray-900 rounded"
+            options={[
+              { value: "UNISEX", label: <span>UNISEX</span> },
+              { value: "MEN", label: <span>MEN</span> },
+              { value: "WOMEN", label: <span>WOMEN</span> },
+              { value: "KIDS", label: <span>KIDS</span> },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item

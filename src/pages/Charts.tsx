@@ -2,9 +2,15 @@ import { Card, Table } from "antd";
 import { Link } from "react-router-dom";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
-import { fetchOrderHistory, useFetchTransaction } from "../api/order/queries";
+import {
+  fetchOrderHistory,
+  useFetchBestSellers,
+  useFetchSalesReport,
+  useFetchTransaction,
+} from "../api/order/queries";
 import { Doughnut } from "react-chartjs-2";
 import { useEffect, useState } from "react";
+import ImageCard from "./imagePreview";
 
 Chart.register(CategoryScale);
 
@@ -22,45 +28,35 @@ export default function Charts() {
   //     });
   //   });
   // }
+  const { mutate: mutateSalesReport, data: salesReportData } =
+    useFetchSalesReport();
+  const { mutate: mutateBestSeller, data: bestSellerData } =
+    useFetchBestSellers();
+  // const bestInside = bestSellerData?
+  useEffect(() => {
+    mutateBestSeller({});
+    mutateSalesReport({});
+  }, []);
 
   const cardData = [
     {
       title: "Total Orders",
       value: getOrderHistory?.length + activeOrders?.length,
-      // increase: "+12% from last month",
+      shippedOrders: salesReportData?.shipped_orders,
     },
     {
       title: "Active Orders",
       value: activeOrders?.length,
-      // increase: "+5% from last month",
+      totalOrders: salesReportData?.total_orders,
     },
     {
       title: "Dispatched Orders",
       value: getOrderHistory?.length,
-      // increase: "+8% from last month",
+      activeOrders: salesReportData?.active_orders,
     },
   ];
 
-  const shoeData = [
-    {
-      name: "Nike Air Force 1",
-      description: "Classic sneaker",
-      price: "$89.99",
-      image: "/placeholder.svg",
-    },
-    {
-      name: "Adidas Ultraboost",
-      description: "Comfortable and stylish",
-      price: "$129.99",
-      image: "/placeholder.svg",
-    },
-    {
-      name: "Converse Chuck Taylor",
-      description: "Iconic canvas sneaker",
-      price: "$59.99",
-      image: "/placeholder.svg",
-    },
-  ];
+  console.log(bestSellerData);
 
   // const tableData = [
   //   {
@@ -101,7 +97,7 @@ export default function Charts() {
   // ];
 
   return (
-    <>
+    <div className=" h-[90%]">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {cardData.map((card, index) => (
           <Card key={index}>
@@ -117,10 +113,10 @@ export default function Charts() {
           </Card>
         ))}
       </div>
-      <section className="mb-8">
+      <section className="mb-4">
         <h2 className="text-2xl font-bold mb-4">Top Selling Shoes</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {shoeData.map((shoe, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+          {bestSellerData?.map((shoe: any, index: number) => (
             <div
               key={index}
               className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-2"
@@ -128,26 +124,21 @@ export default function Charts() {
               <Link className="absolute inset-0 z-10" to="#">
                 <span className="sr-only">View</span>
               </Link>
-              <img
-                alt={`Shoe ${index + 1}`}
-                className="object-cover w-full h-48 group-hover:opacity-50 transition-opacity"
-                height={300}
-                src={shoe.image}
-                style={{ aspectRatio: "300/300", objectFit: "cover" }}
-                width={300}
-              />
+
+              <ImageCard id={shoe?.product_id} key={shoe?.product_id} />
               <div className="bg-white p-4 dark:bg-gray-950">
-                <h3 className="font-bold text-lg">{shoe.name}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {shoe.description}
+                  <span key={index} className="font-bold text-white">
+                    {shoe?.name?.value}
+                  </span>
+                  , Sold Unit: {shoe?.order_count}
                 </p>
-                <h4 className="font-semibold text-xl">{shoe.price}</h4>
               </div>
             </div>
           ))}
         </div>
       </section>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4  ">
         <Card>
           <CardHeader>
             <CardTitle>Sales Graph</CardTitle>
@@ -156,12 +147,16 @@ export default function Charts() {
             <LineChart />
           </CardContent>
         </Card>
-        <Card>
+        <Card size="small">
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table dataSource={activeOrders} pagination={{ pageSize: 5 }}>
+            <Table
+              size="small"
+              dataSource={activeOrders}
+              pagination={{ pageSize: 5 }}
+            >
               <Table.Column title="OrderID" dataIndex="orderId" key="orderId" />
               <Table.Column
                 title="CustomerName"
@@ -190,16 +185,18 @@ export default function Charts() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 }
 
 function CardHeader({ children }: any) {
-  return <div className="flex items-center justify-between">{children}</div>;
+  return (
+    <div className="flex items-center justify-between h-2">{children}</div>
+  );
 }
 
 function CardTitle({ children }: any) {
-  return <h3 className="font-bold">{children}</h3>;
+  return <h3 className="font-bold h-2">{children}</h3>;
 }
 
 function CardContent({ children }: any) {
@@ -237,7 +234,7 @@ const LineChart: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto">
+    <div className=" p-0 w-full max-w-[18rem] mx-auto">
       <Doughnut data={chartData} />
     </div>
   );

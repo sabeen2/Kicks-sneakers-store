@@ -15,6 +15,8 @@ const {
   mailDueTransaction,
   downloadTransactionDetails,
   handleTransactionDataUpload,
+  fetchBestSellers,
+  fetchSalesReport,
 } = transaction;
 
 export const useFetchAllTransaction = (
@@ -74,6 +76,22 @@ export const useGetBill = () => {
       params: {
         id: orderID,
       },
+    });
+  });
+};
+
+export const useFetchBestSellers = () => {
+  return useMutation((requestData: any) => {
+    return makeHttpRequest(fetchBestSellers, {
+      requestData,
+    });
+  });
+};
+
+export const useFetchSalesReport = () => {
+  return useMutation((requestData: any) => {
+    return makeHttpRequest(fetchSalesReport, {
+      requestData,
     });
   });
 };

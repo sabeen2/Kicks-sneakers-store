@@ -72,8 +72,12 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      <Layout style={{ minHeight: "90vh" }}>
+      <Layout
+        style={{ minHeight: "90vh" }}
+        className=" overflow-hidden h-[100%]"
+      >
         <Sider
+          className="  "
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
