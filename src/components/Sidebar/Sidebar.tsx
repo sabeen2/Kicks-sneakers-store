@@ -17,7 +17,7 @@ type MenuItem = Required<MenuProps>["items"][number] & {
   component?: React.ReactNode;
 };
 
-// const currentRole = localStorage.getItem("userRole");
+const currentRole = localStorage.getItem("userRole");
 
 function getItem(
   label: React.ReactNode,
@@ -46,19 +46,20 @@ const items: MenuItem[] = [
   ]),
   getItem("Orders", "sub2", <BookOutlined />, [
     getItem("Order List", "7", undefined, undefined, "order-list"),
-    // getItem("Return History", "8", undefined, undefined, "return-book"),
-    // getItem("Manage Users", "9", <UserOutlined />, undefined, "manage-users"),
   ]),
   getItem(
-    "Categories",
+    "Order History",
     "9",
     <OrderedListOutlined />,
     undefined,
-    "manage-users"
+    "order-history"
   ),
-
-  getItem("Manage Users", "10", <UserOutlined />, undefined, "manage-users"),
 ];
+if (currentRole === "ADMIN") {
+  items.push(
+    getItem("Manage Users", "10", <UserOutlined />, undefined, "manage-users")
+  );
+}
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);

@@ -10,6 +10,7 @@ import Manage from "../../pages/ManageUsers/Manage";
 import Charts from "../../pages/Charts";
 import { useEffect, useState } from "react";
 import { useChangePassword } from "../../api/user/queries";
+import OrderHistory from "../../pages/Order/OrderHistory";
 
 const { Header: AntHeader } = Layout;
 
@@ -140,8 +141,11 @@ const Dashboard: React.FC = () => {
               <Route path="member-setup" element={<MemberSetup />} /> 
               <Route path="book-setup" element={<BookSetup />} /> */}
               <Route path="order-list" element={<Order />} />
+              <Route path="order-history" element={<OrderHistory />} />
               {/* <Route path="return-book" element={<Return />} /> */}
-              <Route path="manage-users" element={<Manage />} />
+              {currentRole === "ADMIN" ? (
+                <Route path="manage-users" element={<Manage />} />
+              ) : null}
             </Routes>
 
             {location.pathname === "/dashboard" && <Charts />}

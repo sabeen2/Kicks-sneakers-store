@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
-  Space,
   Table,
   Button,
   Drawer,
   message,
-  Popconfirm,
   Form,
   Input,
   Upload,
@@ -27,8 +25,7 @@ import {
   useFindTransactionById,
   useDownloadTransactionDetails,
   useUploadTransactionDetails,
-  useGetBill,
-  useDeleteTransaction,
+  useFetchOrderHistory,
 } from "../../api/order/queries";
 
 // interface TransactionDataType {
@@ -64,7 +61,7 @@ interface OrderDataType {
   orderDate: string;
 }
 
-const Order: React.FC = () => {
+const OrderHistory: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<
     OrderDataType | any
@@ -116,61 +113,62 @@ const Order: React.FC = () => {
       title: "Order Date",
       dataIndex: "orderDate",
       key: "orderDate",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            type="default"
-            className="mb-2 px-8 "
-            onClick={() => showEditDrawer(record)}
-          >
-            Edit
-          </Button>
-          <Popconfirm
-            title={
-              <span style={{ fontSize: "20px" }}>
-                Are you sure you want to dispatch?
-              </span>
-            }
-            onConfirm={() => handleReturn(record.orderId)}
-            okText={<span className=" w-10">Yes</span>}
-            cancelText={<span className=" w-10">No</span>}
-            okButtonProps={{ danger: true }}
-            overlayStyle={{ width: "400px", height: "100px" }}
-          >
-            <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
-              Dispatch
-            </button>
-          </Popconfirm>
-          <Popconfirm
-            title={
-              <span style={{ fontSize: "20px" }}>
-                Generating report will dispatch order as well, Are you sure?
-              </span>
-            }
-            onConfirm={() => handleGetBill(record.orderId)}
-            okText={<span className=" w-10">Yes</span>}
-            cancelText={<span className=" w-10">No</span>}
-            okButtonProps={{ danger: true }}
-            overlayStyle={{ width: "400px", height: "100px" }}
-          >
-            <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
-              Generate Bill
-            </button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       <Button
+    //         type="default"
+    //         className="mb-2 px-8 "
+    //         onClick={() => showEditDrawer(record)}
+    //       >
+    //         Edit
+    //       </Button>
+    //       <Popconfirm
+    //         title={
+    //           <span style={{ fontSize: "20px" }}>
+    //             Are you sure you want to dispatch?
+    //           </span>
+    //         }
+    //         onConfirm={() => handleReturn(record.orderId)}
+    //         okText={<span className=" w-10">Yes</span>}
+    //         cancelText={<span className=" w-10">No</span>}
+    //         okButtonProps={{ danger: true }}
+    //         overlayStyle={{ width: "400px", height: "100px" }}
+    //       >
+    //         <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
+    //           Dispatch
+    //         </button>
+    //       </Popconfirm>
+    //       <Popconfirm
+    //         title={
+    //           <span style={{ fontSize: "20px" }}>
+    //             Generating report will dispatch order as well, Are you sure?
+    //           </span>
+    //         }
+    //         onConfirm={() => handleGetBill(record.orderId)}
+    //         okText={<span className=" w-10">Yes</span>}
+    //         cancelText={<span className=" w-10">No</span>}
+    //         okButtonProps={{ danger: true }}
+    //         overlayStyle={{ width: "400px", height: "100px" }}
+    //       >
+    //         <button className=" text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5  text-center me-2 mb-2 py-2">
+    //           Generate Bill
+    //         </button>
+    //       </Popconfirm>
+    //     </Space>
+    //   ),
+    // },
   ];
 
-  const showEditDrawer = (transaction: OrderDataType) => {
-    setSelectedTransaction(transaction);
-    console.log(transaction);
-    setOpen(true);
-  };
+  // const showEditDrawer = (transaction: OrderDataType) => {
+  //   setSelectedTransaction(transaction);
+  //   console.log(transaction);
+  //   setOpen(true);
+  // };
 
   const showDrawer = () => {
     setOpen(true);
@@ -184,7 +182,7 @@ const Order: React.FC = () => {
     setSearchedTransactionId(searchedTransactionId);
   };
 
-  const { mutate: dispatchOrder } = useDeleteTransaction();
+  // const { mutate: dispatchOrder } = useDeleteTransaction();
 
   // const handleReturn = (transactionID: any) => {
   //   let payload: any = {
@@ -203,36 +201,36 @@ const Order: React.FC = () => {
   //   });
   // };
 
-  const handleReturn = (orderID: any) => {
-    // console.log(orderID);
-    dispatchOrder(orderID, {
-      onSuccess: () => {
-        message.success("SuccessFully Dispached");
-      },
-      onError: (data) => {
-        message.error(`Failed:  ${data}`);
-      },
-    });
-  };
+  // const handleReturn = (orderID: any) => {
+  //   // console.log(orderID);
+  //   dispatchOrder(orderID, {
+  //     onSuccess: () => {
+  //       message.success("SuccessFully Dispached");
+  //     },
+  //     onError: (data) => {
+  //       message.error(`Failed:  ${data}`);
+  //     },
+  //   });
+  // };
 
-  const { mutate: generateBill } = useGetBill();
+  // const { mutate: generateBill } = useGetBill();
 
-  const handleGetBill = (orderID: any) => {
-    generateBill(orderID, {
-      onSuccess: (data) => {
-        const blob = new Blob([data], {
-          type: "application/pdf",
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "bill.pdf";
-        link.click();
-      },
-      onError: (data) => {
-        message.error(`Failed to Download: ${data}`);
-      },
-    });
-  };
+  // const handleGetBill = (orderID: any) => {
+  //   generateBill(orderID, {
+  //     onSuccess: (data) => {
+  //       const blob = new Blob([data], {
+  //         type: "application/pdf",
+  //       });
+  //       const link = document.createElement("a");
+  //       link.href = window.URL.createObjectURL(blob);
+  //       link.download = "bill.pdf";
+  //       link.click();
+  //     },
+  //     onError: (data) => {
+  //       message.error(`Failed to Download: ${data}`);
+  //     },
+  //   });
+  // };
   const { mutate: downloadTransactions } = useDownloadTransactionDetails();
 
   const handleDownloadTransactionDetails = () => {
@@ -258,6 +256,8 @@ const Order: React.FC = () => {
     refetch: refetchTransaction,
   } = useFetchTransaction();
 
+  const { data: orderHistory } = useFetchOrderHistory();
+
   const { data: findTransaction, refetch: refetchFindTransaction } =
     useFindTransactionById(searchedTransactionId);
 
@@ -277,13 +277,11 @@ const Order: React.FC = () => {
   };
 
   useEffect(() => {
-    const searchedTransactions = transactionData?.filter(
-      (transaction: OrderDataType) => {
-        return Object.values(transaction).some((value) =>
-          String(value).toLowerCase().includes(searchText.toLowerCase())
-        );
-      }
-    );
+    const searchedTransactions = orderHistory?.filter((transaction: any) => {
+      return Object.values(transaction).some((value) =>
+        String(value).toLowerCase().includes(searchText.toLowerCase())
+      );
+    });
     setFindByName(searchedTransactions);
   }, [searchText, transactionData]);
 
@@ -352,7 +350,7 @@ const Order: React.FC = () => {
     <div className="flex-grow mx-10 mt-5 max-h-96">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-bold">Order List</h2>
+          <h2 className="text-xl font-bold">Order History</h2>
           <Breadcrumb
             separator={<span style={{ color: "black" }}>/</span>}
             className="bg-indigo-100 my-4 rounded-lg p-2 text-xs inline-flex text-black"
@@ -447,7 +445,7 @@ const Order: React.FC = () => {
       />
 
       <Button
-        className=" mb-4  bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
+        className="  hidden mb-4  bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
         type="default"
         onClick={handleDownloadTransactionDetails}
         icon={<DownloadOutlined />}
@@ -492,7 +490,7 @@ const Order: React.FC = () => {
           </Form.Item>
           <Form.Item>
             <Button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2  rounded-lg mt-2 mb-0  absolute left-52"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2  rounded-lg mt-2 mb-0  absolute left-52 "
               type="default"
               htmlType="submit"
             >
@@ -505,4 +503,4 @@ const Order: React.FC = () => {
   );
 };
 
-export default Order;
+export default OrderHistory;

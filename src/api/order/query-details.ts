@@ -26,6 +26,13 @@ const transaction = {
     requestAuthType: RequestAuthType.AUTH,
   },
 
+  sendMail: {
+    controllerName: `mail/send-mail`,
+    queryKeyName: `SEND_MAIL`,
+    requestMethod: RequestMethodEnum.POST,
+    requestAuthType: RequestAuthType.AUTH,
+  },
+
   fetchSalesReport: {
     controllerName: `orders/get-sales-report`,
     queryKeyName: `FETCH_BEST`,

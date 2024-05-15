@@ -11,8 +11,6 @@ import {
 } from "antd";
 
 import { useAddTransaction } from "../../api/order/queries";
-// import { useFetchMember } from "../../api/members/queries";
-
 import axios from "axios";
 
 const layout = {
@@ -54,29 +52,47 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
 }) => {
   const { mutate: addTransaction, isLoading: isAddingTransaction } =
     useAddTransaction();
-  // const { mutate: editTransaction } = useupdateTransaction();
+
   const [products, setProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  const handleProductSelect = (selectedProductIds: any) => {
+    setSelectedProducts(selectedProductIds);
+  };
+
+  const renderQuantityInputs = () => {
+    return selectedProducts.map((productId) => (
+      <Form.Item
+        key={productId}
+        label={`Quantity for Product ${productId}`}
+        name={["orderItems", productId, "quantity"]}
+        rules={[{ required: true, message: "Please enter quantity" }]}
+      >
+        <InputNumber className="w-full" />
+      </Form.Item>
+    ));
+  };
 
   const onFinish = (values: any) => {
-    console.log(values);
-    let payload: any = {
-      // orderId: values.orderId,
+    let payload = {
       customerName: values.customerName,
+      customerEmail: values.customerEmail,
+      address: values.address,
       customerContact: values.customerContact,
-
-      orderItems: [
-        {
-          productId: values.productId,
-          quantity: values.quantity,
-        },
-      ],
+      orderItems: selectedProducts.map((productId) => ({
+        productId,
+        quantity: values.orderItems[productId]?.quantity, // Get quantity for each product
+      })),
     };
+
     if (selectedTransaction) {
+      console.log(selectedTransaction);
       payload = {
         ...payload,
-        orderId: selectedTransaction.orderId,
+        orderId: (selectedTransaction as { orderId: any }).orderId,
       };
     }
+
     selectedTransaction
       ? addTransaction(payload, {
           onSuccess: (data: any) => {
@@ -95,47 +111,18 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
         });
   };
 
-  const onReset = () => {
-    form.resetFields();
-  };
-
   useEffect(() => {
     if (selectedTransaction) {
-      form.setFieldsValue({
-        customerName: selectedTransaction.customerName,
-        customerContact: selectedTransaction.customerContact,
-        orderItems: [
-          {
-            productId: selectedTransaction.productId,
-            quantity: selectedTransaction.quantity,
-          },
-        ],
-      });
+      form.setFieldsValue(selectedTransaction);
     }
   }, [selectedTransaction, form]);
-
-  // const { data: memberData } = useFetchMember();
-
-  const calculateToDate = (value: any) => {
-    if (value === null) {
-      form.setFieldsValue({ toDate: null });
-    }
-    const fromDate = new Date();
-    form.setFieldsValue({ fromDate: fromDate.toISOString().split("T")[0] });
-    if (fromDate && value) {
-      const toDate = new Date(fromDate);
-      toDate.setDate(toDate.getDate() + value);
-      form.setFieldsValue({ toDate: toDate.toISOString().split("T")[0] });
-    }
-  };
-  calculateToDate(66);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("bookRental");
         const response = await axios.post(
-          "https://orderayo.onrender.com/products/get-all-products",
+          "https://orderayo.onrender.com/products/all-products-without-pagination",
           {},
           {
             headers: {
@@ -144,8 +131,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
             },
           }
         );
-        console.log("Fetched products:", response.data.data.content);
-        setProducts(response.data.data.content);
+        setProducts(response.data.data);
       } catch (error) {}
     };
 
@@ -176,26 +162,47 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
           <Input className="w-full" />
         </Form.Item>
         <Form.Item
+          label="Customer Address"
+          name="address"
+          rules={[
+            {
+              required: true,
+              message: "Please enter customer address",
+            },
+          ]}
+        >
+          <Input className="w-full" />
+        </Form.Item>
+        <Form.Item
+          label="Customer Email"
+          name="customerEmail"
+          rules={[
+            {
+              required: true,
+              type: "email",
+              message: "Please enter valid customer Email",
+            },
+          ]}
+        >
+          <Input className="w-full" />
+        </Form.Item>
+        <Form.Item
           label="Product"
           name="productId"
           rules={[{ required: true, message: "Please select a product" }]}
         >
           <Select
+            mode="multiple"
             className="w-full"
             placeholder="Select Product"
-            options={products.map((product: any) => ({
-              value: product.prodid,
-              label: product.prodname.value,
+            options={products?.map((product: any) => ({
+              value: product.prodId,
+              label: product.prodName,
             }))}
+            onChange={handleProductSelect}
           />
         </Form.Item>
-        <Form.Item
-          label="Quantity"
-          name="quantity"
-          rules={[{ required: true, message: "Please enter quantity" }]}
-        >
-          <InputNumber className="w-full" />
-        </Form.Item>
+        {renderQuantityInputs()}
         <Form.Item {...tailLayout}>
           <Space>
             <Button
@@ -209,7 +216,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
             <Button
               className="border border-gray-900 py-1 px-5 rounded-full"
               htmlType="button"
-              onClick={onReset}
+              onClick={() => form.resetFields()}
             >
               Reset
             </Button>

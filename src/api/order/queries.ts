@@ -40,7 +40,7 @@ export const useFetchAllTransaction = (
   );
 };
 
-export const fetchOrderHistory = () => {
+export const useFetchOrderHistory = () => {
   return useQuery([fetchAllTransaction.queryKeyName], () => {
     return makeHttpRequest(fetchAllTransaction);
   });
@@ -69,6 +69,12 @@ export const useDeleteTransaction = () => {
     });
   });
 };
+
+// export const useSendMail = () => {
+//   return useMutation((requestData: any) => {
+//     return makeHttpRequest(sendMail, {});
+//   });
+// };
 
 export const useGetBill = () => {
   return useMutation((orderID: any) => {
