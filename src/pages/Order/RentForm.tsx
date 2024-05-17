@@ -23,19 +23,23 @@ const tailLayout = {
 };
 
 interface TransactionDataType {
-  orderId: any;
+  orderId?: any;
   quantity: any;
   productId: any;
-  customerContact: any;
   customerName: any;
-  id: number;
-  bookName: string;
-  bookId: number;
-  fromDate: any;
-  toDate: any;
-  rentType: string;
-  memberName: string;
-  Fk_member_id: number;
+  customerEmail: any;
+  address: any;
+  customerContact: any;
+  orderItems: { productId: any; quantity: any }[];
+}
+
+interface PayloadType {
+  customerName: any;
+  customerEmail: any;
+  address: any;
+  customerContact: any;
+  orderItems: { productId: any; quantity: any }[];
+  orderId?: any;
 }
 
 interface CreateTransactionProps {
@@ -74,7 +78,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
   };
 
   const onFinish = (values: any) => {
-    let payload = {
+    let payload: PayloadType = {
       customerName: values.customerName,
       customerEmail: values.customerEmail,
       address: values.address,

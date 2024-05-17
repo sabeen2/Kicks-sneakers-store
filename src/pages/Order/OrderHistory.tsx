@@ -28,20 +28,9 @@ import {
   useFetchOrderHistory,
 } from "../../api/order/queries";
 
-// interface TransactionDataType {
-//   id: any;
-//   bookName: string;
-//   code: any;
-//   fromDate: any;
+import { DatePicker, Space } from "antd";
 
-//   toDate: any;
-//   transactionType: any;
-//   prodId: number;
-//   productName: string;
-//   productType: string;
-//   quantity: number;
-//   price: number;
-// }
+const { RangePicker } = DatePicker;
 
 interface ProductDataType {
   prodId: number;
@@ -66,15 +55,15 @@ const OrderHistory: React.FC = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<
     OrderDataType | any
   >(null);
-  const [findTheTransaction, setFindTheTransaction] = useState<
-    OrderDataType | any
-  >(null);
+  const [setFindTheTransaction] = useState<OrderDataType | any>(null);
   const [findByName, setFindByName] = useState<OrderDataType | any>(null);
   const [inputValueIsNumber, setInputValueIsNumber] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
   const [form] = Form.useForm();
   const [inputForm] = Form.useForm();
   const [uploadForm] = Form.useForm();
+  const [dateRange, setDateRage] = useState<any>([]);
+  const [filteredDateData, setFilteredDateData] = useState<any>([]);
 
   const [searchedTransactionId, setSearchedTransactionId] = useState<
     OrderDataType | any
@@ -250,13 +239,11 @@ const OrderHistory: React.FC = () => {
     });
   };
 
-  const {
-    data: transactionData,
-    isLoading: isLoadingTransactionData,
-    refetch: refetchTransaction,
-  } = useFetchTransaction();
+  const { data: transactionData, refetch: refetchTransaction } =
+    useFetchTransaction();
 
-  const { data: orderHistory } = useFetchOrderHistory();
+  const { data: orderHistory, isLoading: orderHistoryLoading } =
+    useFetchOrderHistory();
 
   const { data: findTransaction, refetch: refetchFindTransaction } =
     useFindTransactionById(searchedTransactionId);
@@ -346,6 +333,52 @@ const OrderHistory: React.FC = () => {
     });
   };
 
+  // const filterDate = () => {
+  //   // console.log(dateRange);
+  //   orderHistory?.filter((orderData: any) => {
+  //     const myOrderDate = new Date(orderData.orderDate);
+  //     const filteredDate = myOrderDate.toISOString().split("T")[0];
+  //   });
+  // };
+
+  // const filterDate = (orderHistory: any[], dateRange: [any, any]) => {
+  //   const [startDateStr, endDateStr] = dateRange;
+
+  //   const startDate = new Date(startDateStr);
+  //   const endDate = new Date(endDateStr);
+  //   const filteredOrders = orderHistory?.filter((orderData) => {
+  //     const orderDate = new Date(orderData.orderDate);
+  //     return orderDate >= startDate && orderDate <= endDate;
+  //   });
+  //   setFilteredDateData(filteredOrders);
+  // };
+
+  useEffect(() => {
+    const [startDateStr, endDateStr] = dateRange;
+
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+    const filteredOrders = orderHistory?.filter((orderData: any) => {
+      const orderDate = new Date(orderData.orderDate);
+      return orderDate >= startDate && orderDate <= endDate;
+    });
+    setFilteredDateData(filteredOrders);
+  }, [dateRange]);
+
+  // console.log(filteredDateData);
+
+  const getDataSource = () => {
+    if (findByName?.length >= 1) {
+      return findByName;
+    } else if (filteredDateData?.length >= 1) {
+      return filteredDateData;
+    } else {
+      return orderHistory;
+    }
+  };
+
+  // console.log(filteredDateData);
+
   return (
     <div className="flex-grow mx-10 mt-5 max-h-96">
       <div className="flex justify-between items-center mb-4">
@@ -392,50 +425,72 @@ const OrderHistory: React.FC = () => {
           </div>
         </Drawer>
       </div>
-      <div className=" flex flex-wrap items-center">
-        <Form
-          form={inputForm}
-          onFinish={searchById}
-          className="flex items-center mb-0"
-        >
-          <Form.Item name="transactionId" className="mr-2 w-50">
-            <Input
-              placeholder="Search"
-              value={
-                searchedTransactionId
-                  ? searchedTransactionId
-                  : searchText
-                  ? searchText
-                  : ""
-              }
-              onChange={handleNameChange}
-              className="border-2 border-blue-500 focus:border-blue-700 rounded-md  outline-none font-extrabold"
-            />
-          </Form.Item>
 
-          {inputValueIsNumber && (
-            <Form.Item className="">
-              <Button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2  rounded-lg"
-                type="default"
-                htmlType="submit"
-              >
-                Search By Id ??
-              </Button>
+      <div className="flex justify-between">
+        <div className=" flex flex-wrap items-center">
+          <Form
+            form={inputForm}
+            onFinish={searchById}
+            className="flex items-center mb-0"
+          >
+            <Form.Item name="transactionId" className="mr-2 w-50">
+              <Input
+                placeholder="Search"
+                value={
+                  searchedTransactionId
+                    ? searchedTransactionId
+                    : searchText
+                    ? searchText
+                    : ""
+                }
+                onChange={handleNameChange}
+                className="border-2 border-blue-500 focus:border-blue-700 rounded-md  outline-none font-extrabold"
+              />
             </Form.Item>
-          )}
-        </Form>
+
+            {inputValueIsNumber && (
+              <Form.Item className="">
+                <Button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2  rounded-lg"
+                  type="default"
+                  htmlType="submit"
+                >
+                  Search By Id ??
+                </Button>
+              </Form.Item>
+            )}
+          </Form>
+        </div>
+
+        {/* RangePicker */}
+        <div>
+          {" "}
+          <Space direction="vertical" size={12}>
+            <RangePicker
+              // showTime={{ format: "HH:mm" }}
+              format="YYYY-MM-DD "
+              onChange={(_, dateString) => {
+                // console.log("Selected Time: ", value);
+                // console.log("Formatted Selected Time: ", dateString);
+                // console.log(dateString);
+                setDateRage(dateString);
+              }}
+              // onOk={onOk}
+            />
+          </Space>
+        </div>
       </div>
       <Table
         columns={columns}
-        dataSource={
-          findTheTransaction
-            ? [findTheTransaction]
-            : findByName
-            ? findByName
-            : transactionData
-        }
-        loading={isLoadingTransactionData}
+        // dataSource={
+        //   findByName
+        //     ? findByName
+        //     : filteredDateData
+        //     ? filteredDateData
+        //     : orderHistory
+        // }
+        dataSource={getDataSource()}
+        loading={orderHistoryLoading}
         rowKey="id"
         pagination={{
           pageSize: 7,
