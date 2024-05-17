@@ -55,7 +55,10 @@ const OrderHistory: React.FC = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<
     OrderDataType | any
   >(null);
-  const [setFindTheTransaction] = useState<OrderDataType | any>(null);
+  const [findTheTrasaction, setFindTheTransaction] = useState<
+    OrderDataType | any
+  >(null);
+  findTheTrasaction;
   const [findByName, setFindByName] = useState<OrderDataType | any>(null);
   const [inputValueIsNumber, setInputValueIsNumber] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
@@ -368,16 +371,14 @@ const OrderHistory: React.FC = () => {
   // console.log(filteredDateData);
 
   const getDataSource = () => {
-    if (findByName?.length >= 1) {
-      return findByName;
-    } else if (filteredDateData?.length >= 1) {
+    if (filteredDateData?.length >= 1) {
       return filteredDateData;
+    } else if (findByName?.length >= 1) {
+      return findByName;
     } else {
       return orderHistory;
     }
   };
-
-  // console.log(filteredDateData);
 
   return (
     <div className="flex-grow mx-10 mt-5 max-h-96">
@@ -492,11 +493,6 @@ const OrderHistory: React.FC = () => {
         dataSource={getDataSource()}
         loading={orderHistoryLoading}
         rowKey="id"
-        pagination={{
-          pageSize: 7,
-          responsive: true,
-          onChange() {},
-        }}
       />
 
       <Button
