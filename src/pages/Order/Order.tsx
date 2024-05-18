@@ -118,6 +118,7 @@ const Order: React.FC = () => {
       title: "Order Date",
       dataIndex: "orderDate",
       key: "orderDate",
+      render: (date) => date.split("T")[0],
     },
     {
       title: "Action",
@@ -221,7 +222,6 @@ const Order: React.FC = () => {
   const handleGetBill = (orderID: any) => {
     generateBill(orderID, {
       onSuccess: (base64Data) => {
-        // Decode base64 string to binary data
         const binaryString = window.atob(base64Data);
         const len = binaryString.length;
         const bytes = new Uint8Array(len);
@@ -230,7 +230,6 @@ const Order: React.FC = () => {
           bytes[i] = binaryString.charCodeAt(i);
         }
 
-        // Create a Blob from the binary data
         const blob = new Blob([bytes], { type: "application/pdf" });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
