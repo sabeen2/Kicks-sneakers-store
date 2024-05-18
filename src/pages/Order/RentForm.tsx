@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
-  FormInstance,
+  // FormInstance,
   Input,
   Space,
   message,
@@ -45,14 +45,16 @@ interface PayloadType {
 interface CreateTransactionProps {
   setSelectedTransaction?: TransactionDataType | null | undefined;
   selectedTransaction?: TransactionDataType | null | undefined;
-  form: FormInstance<any>;
-  onSucess: () => void;
+  form?: any;
+  onSucess?: any;
+  thisSelectedProduct?: any;
 }
 
 const CreateTransaction: React.FC<CreateTransactionProps> = ({
   selectedTransaction,
   form,
   onSucess,
+  thisSelectedProduct,
 }) => {
   const { mutate: addTransaction, isLoading: isAddingTransaction } =
     useAddTransaction();
@@ -68,7 +70,26 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
     return selectedProducts.map((productId) => (
       <Form.Item
         key={productId}
-        label={`Quantity for Product ${productId}`}
+        // label={
+        //   thisSelectedProduct
+        //     ? `Quantity  for prod ${thisSelectedProduct?.prodid}`
+        //     : `Quantityy for prod ${productId}`
+        // }
+        label={`Quantity for prod ${productId}`}
+        // name={
+        //   ["orderItems", productId, "quantity"] || [
+        //     "orderItems",
+        //     thisSelectedProduct?.prodid,
+        //     "quantity",
+        //   ]
+        // }
+
+        // name={
+        //   thisSelectedProduct
+        //     ? ["orderItems", thisSelectedProduct.prodid, "quantity"]
+        //     : ["orderItems", productId, "quantity"]
+        // }
+
         name={["orderItems", productId, "quantity"]}
         rules={[{ required: true, message: "Please enter quantity" }]}
       >
@@ -90,7 +111,6 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
     };
 
     if (selectedTransaction) {
-      console.log(selectedTransaction);
       payload = {
         ...payload,
         orderId: (selectedTransaction as { orderId: any }).orderId,
@@ -118,6 +138,11 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
   useEffect(() => {
     if (selectedTransaction) {
       form.setFieldsValue(selectedTransaction);
+    } else if (thisSelectedProduct) {
+      form.setFieldsValue({
+        productId: thisSelectedProduct.prodid,
+        prodName: thisSelectedProduct.prodname.value,
+      });
     }
   }, [selectedTransaction, form]);
 
@@ -230,5 +255,4 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
     </div>
   );
 };
-
 export default CreateTransaction;

@@ -1,17 +1,30 @@
 import React, { useState } from "react";
-import { Button, Drawer, Form, Card, Pagination } from "antd";
+import { Button, Drawer, Form, Card, Pagination, Modal } from "antd";
 import CreateAuthor from "./CreateAuthor";
 import { useFetchAuthor } from "../../api/product/queries";
 import ImageCard from "./imagePreview";
+import CreateTransaction from "../Order/RentForm";
 
 const ProductList: React.FC = () => {
   // const [products, setProducts] = useState<any[]>([]);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [selectedAuthor, setSelectedAuthor] = useState<any>([]);
   const [pageSize, setPageSize] = useState(10);
+  const [thisSelectedProduct, setThisSelectedProduct] = useState<any>([]);
+
   const [page, setPage] = useState(1);
   setPageSize;
   const [form] = Form.useForm();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // const showModal = () => {
+  //   setIsModalOpen(true);
+  // };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const showDrawer = () => {
     setDrawerVisible(true);
@@ -26,6 +39,8 @@ const ProductList: React.FC = () => {
 
   const onSuccessAdd = () => {
     closeDrawer();
+
+    setIsModalOpen(false);
   };
 
   const showEditDrawer = (thisProduct: any) => {
@@ -34,71 +49,15 @@ const ProductList: React.FC = () => {
     setDrawerVisible(true);
   };
 
-  // useEffect(() => {
-  //   const fetchImages = async () => {
-  //     try {
-  //       const token = localStorage.getItem("bookRental");
-  //       const updatedProducts = await Promise.all(
-  //         products.map(async (product) => {
-  //           const response = await axios.get(
-  //             `https://orderayo.onrender.com/products/get-image-by-id?id=${prprodId?: anyprodId: anyoduct.prodid}`,
-  //             {
-  //               headers: {
-  //                 Authorization: `Bearer ${token}`,
-  //                 accept: "*/*",
-  //               },
-  //               responseType: "blob",
-  //             }
-  //           );
-
-  //           const blob = new Blob([response.data], {
-  //             type: response.headers["content-type"],
-  //           });
-  //           const imageUrl = URL.createObjectURL(blob);
-
-  //           return { ...product, imageUrl };
-  //         })
-  //       );
-  //       setProducts(updatedProducts);
-  //     } catch (error) {
-  //       console.error("Error fetching images:", error);
-  //     }
-  //   };
-
-  //   // Fetch images only if products exist
-  //   if (products.length > 0) {
-  //     fetchImages();
-  //   }
-  // }, [products]); // Fetch images whenever products change
-
-  // const { data: imageData } = useFetchImage(prodId);
-
-  // const { data: imageData } = useFetchImage(prodId);
-  // const { data: imageBaseData } = useFetchImageBase(prodId);
   const { data: productData, refetch: refetchProducts } = useFetchAuthor({
     row: pageSize,
     page: page,
   });
 
-  // const imageFile = `data:image/jpeg;base64, ${imageBaseData}`;
-
-  // const { data: allProductsData } = useGetAllProducts();
-
-  // useEffect(() => {
-  //   getProducts(
-  //     {},
-  //     {
-  //       onSuccess: (resData) => {
-  //         setProducts(resData.content);
-  //       },
-  //       onError: (data) => {
-  //         message.error(`Failed to get products ${data}`);
-  //       },
-  //     }
-  //   );
-  // }, []);
-
-  // console.log({ products });
+  const createOrder = (currentOrder: any) => {
+    setThisSelectedProduct(currentOrder);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="mx-auto container h-screen ">
@@ -155,9 +114,18 @@ const ProductList: React.FC = () => {
                 onClick={() => {
                   showEditDrawer(item);
                 }}
-                className="mt-4 border-black border bg-slate-100 hover:bg-white hover:scale-105 rounded-lg px-3 py-1 hover  "
+                className="mt-4 border-black border  bg-slate-100 hover:bg-white hover:scale-105 rounded-lg px-3 py-1 hover  "
               >
                 Edit
+              </button>
+              <button
+                key={item?.prodid}
+                onClick={() => {
+                  createOrder(item);
+                }}
+                className="mt-4 ml-2 border-black border bg-black text-white font-medium hover:bg-white  hover:text-black duration delay-100 hover:scale-105 rounded-lg px-2 py-1 hover  "
+              >
+                Create Order
               </button>
             </div>
           </Card>
@@ -167,8 +135,7 @@ const ProductList: React.FC = () => {
         className="mt-4 flex justify-end"
         pageSize={pageSize}
         current={page}
-        onChange={(currentPage, row) => {
-          console.log(currentPage, row);
+        onChange={(currentPage) => {
           setPage(currentPage);
         }}
         total={productData?.totalElements}
@@ -187,6 +154,18 @@ const ProductList: React.FC = () => {
           form={form}
         />
       </Drawer>
+      <Modal
+        title="Create Order"
+        open={isModalOpen}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <CreateTransaction
+          form={form}
+          onSucess={onSuccessAdd}
+          thisSelectedProduct={thisSelectedProduct}
+        />
+      </Modal>
     </div>
   );
 };

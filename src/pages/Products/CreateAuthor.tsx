@@ -67,7 +67,6 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
     }
 
     try {
-      console.log(payload);
       const response = await axios.post(
         "https://orderayo.onrender.com/products/add-product",
         formData,
@@ -100,7 +99,6 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
 
   useEffect(() => {
     if (selectedAuthor) {
-      console.log(selectedAuthor.prodid);
       form.setFieldsValue({
         prodId: selectedAuthor?.prodid,
         name: selectedAuthor?.prodname?.value,
