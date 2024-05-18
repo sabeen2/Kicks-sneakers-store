@@ -375,6 +375,8 @@ const OrderHistory: React.FC = () => {
       return filteredDateData;
     } else if (findByName?.length >= 1) {
       return findByName;
+    } else if (findByName?.length == 0) {
+      return null;
     } else {
       return orderHistory;
     }
