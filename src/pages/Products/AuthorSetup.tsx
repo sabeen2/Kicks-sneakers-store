@@ -7,6 +7,7 @@ import ImageCard from "./imagePreview";
 const ProductList: React.FC = () => {
   // const [products, setProducts] = useState<any[]>([]);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [selectedAuthor, setSelectedAuthor] = useState<any>([]);
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   setPageSize;
@@ -18,10 +19,19 @@ const ProductList: React.FC = () => {
 
   const closeDrawer = () => {
     setDrawerVisible(false);
+    form.resetFields();
+    refetchProducts();
+    setSelectedAuthor(null);
   };
 
   const onSuccessAdd = () => {
     closeDrawer();
+  };
+
+  const showEditDrawer = (thisProduct: any) => {
+    setSelectedAuthor(thisProduct);
+
+    setDrawerVisible(true);
   };
 
   // useEffect(() => {
@@ -65,12 +75,10 @@ const ProductList: React.FC = () => {
 
   // const { data: imageData } = useFetchImage(prodId);
   // const { data: imageBaseData } = useFetchImageBase(prodId);
-  const { data: productData } = useFetchAuthor({
+  const { data: productData, refetch: refetchProducts } = useFetchAuthor({
     row: pageSize,
     page: page,
   });
-
-  console.log(productData);
 
   // const imageFile = `data:image/jpeg;base64, ${imageBaseData}`;
 
@@ -93,7 +101,7 @@ const ProductList: React.FC = () => {
   // console.log({ products });
 
   return (
-    <div className="mx-auto container">
+    <div className="mx-auto container h-screen ">
       <div className="flex justify-end mb-6">
         <Button
           className="bg-black text-white font-semibold"
@@ -113,7 +121,6 @@ const ProductList: React.FC = () => {
                 id={item.prodid || item.prodId}
                 key={item.prodid || item.prodId}
               />
-
               <div className="absolute top-2 right-0 bg-gray-900 text-white px-2 py-1 rounded-full text-xs font-medium">
                 {item?.prodtype || item?.prodType}
               </div>
@@ -143,11 +150,21 @@ const ProductList: React.FC = () => {
                   {item?.sellingprice || item?.sellingPrice}
                 </span>
               </div>
+              <button
+                key={item?.prodid}
+                onClick={() => {
+                  showEditDrawer(item);
+                }}
+                className="mt-4 border-black border bg-slate-100 hover:bg-white hover:scale-105 rounded-lg px-3 py-1 hover  "
+              >
+                Edit
+              </button>
             </div>
           </Card>
         ))}
       </div>
       <Pagination
+        className="mt-4 flex justify-end"
         pageSize={pageSize}
         current={page}
         onChange={(currentPage, row) => {
@@ -158,13 +175,17 @@ const ProductList: React.FC = () => {
       />
 
       <Drawer
-        title="Add Product"
+        title={selectedAuthor ? "Edit product" : "Create Product"}
         placement="right"
         onClose={closeDrawer}
         visible={drawerVisible}
         width={400}
       >
-        <CreateAuthor onSucess={onSuccessAdd} form={form} />
+        <CreateAuthor
+          selectedAuthor={selectedAuthor}
+          onSucess={onSuccessAdd}
+          form={form}
+        />
       </Drawer>
     </div>
   );

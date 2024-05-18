@@ -47,6 +47,7 @@ import {
 // }
 
 interface ProductDataType {
+  selectedAuthor: any[];
   prodId: number;
   productName: string;
   productType: string;
@@ -55,6 +56,7 @@ interface ProductDataType {
 }
 
 interface OrderDataType {
+  selectedAuthor: any[];
   prodId(prodId: any): void;
   orderId: number;
   customerName: string;
@@ -168,7 +170,6 @@ const Order: React.FC = () => {
 
   const showEditDrawer = (transaction: OrderDataType) => {
     setSelectedTransaction(transaction);
-    console.log(transaction);
     setOpen(true);
   };
 

@@ -31,8 +31,8 @@ interface AuthorDataType {
 }
 
 interface CreateAuthorProps {
-  setSelectedAuthor?: AuthorDataType | null | undefined;
-  selectedAuthor?: AuthorDataType | null | undefined;
+  setSelectedAuthor?: AuthorDataType | null | undefined | any;
+  selectedAuthor?: AuthorDataType | null | undefined | any;
   form: FormInstance<any>;
   onSucess: () => void;
 }
@@ -57,12 +57,17 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
       file: values.file?.[0]?.originFileObj,
     };
 
+    if (selectedAuthor) {
+      payload.prodId = selectedAuthor?.prodid;
+    }
+
     const formData = new FormData();
     for (const key in payload) {
       formData.append(key, payload[key]);
     }
 
     try {
+      console.log(payload);
       const response = await axios.post(
         "https://orderayo.onrender.com/products/add-product",
         formData,
@@ -76,7 +81,11 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
 
       response;
 
-      message.success(`Added product successfully: ${values.name}`);
+      message.success(
+        selectedAuthor
+          ? `Edited product successfully: ${values.name}`
+          : `Added product successfully: ${values.name}`
+      );
       onSucess();
     } catch (error) {
       message.error(`Failed to add product: ${message}`);
@@ -91,13 +100,14 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
 
   useEffect(() => {
     if (selectedAuthor) {
+      console.log(selectedAuthor.prodid);
       form.setFieldsValue({
-        name: selectedAuthor.name,
-        stock: selectedAuthor.stock,
-        prodType: selectedAuthor.prodType,
-        sellingPrice: selectedAuthor.sellingPrice,
-        costPrice: selectedAuthor.costPrice,
-        file: selectedAuthor.file,
+        prodId: selectedAuthor?.prodid,
+        name: selectedAuthor?.prodname?.value,
+        stock: selectedAuthor?.availablestock,
+        costPrice: selectedAuthor?.costprice,
+        prodType: selectedAuthor?.prodtype,
+        sellingPrice: selectedAuthor?.sellingprice,
       });
     }
   }, [selectedAuthor, form]);
