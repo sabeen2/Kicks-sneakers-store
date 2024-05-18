@@ -220,20 +220,29 @@ const Order: React.FC = () => {
 
   const handleGetBill = (orderID: any) => {
     generateBill(orderID, {
-      onSuccess: (data) => {
-        const blob = new Blob([data], {
-          type: "application/pdf",
-        });
+      onSuccess: (base64Data) => {
+        // Decode base64 string to binary data
+        const binaryString = window.atob(base64Data);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        // Create a Blob from the binary data
+        const blob = new Blob([bytes], { type: "application/pdf" });
         const link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
         link.download = "bill.pdf";
         link.click();
       },
-      onError: (data) => {
-        message.error(`Failed to Download: ${data}`);
+      onError: (error) => {
+        message.error(`Failed to Download: ${error}`);
       },
     });
   };
+
   const { mutate: downloadTransactions } = useDownloadTransactionDetails();
 
   const handleDownloadTransactionDetails = () => {
