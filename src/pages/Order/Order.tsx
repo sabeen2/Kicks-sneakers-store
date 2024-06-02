@@ -438,6 +438,7 @@ const Order: React.FC = () => {
         </Form>
       </div>
       <Table
+        size="small"
         columns={columns}
         dataSource={
           findTheTransaction

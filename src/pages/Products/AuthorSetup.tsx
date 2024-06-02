@@ -72,8 +72,9 @@ const ProductList: React.FC = () => {
       <div className="grid grid-cols-5 gap-x-6 gap-y-6">
         {productData?.content?.map((item: any, index: any) => (
           <Card
+            size="small"
             key={index}
-            className=" bg-white rounded-lg shadow-md overflow-hidden "
+            className=" bg-white rounded-lg shadow-md overflow-hidden  "
           >
             <div className="relative">
               <ImageCard

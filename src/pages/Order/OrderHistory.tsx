@@ -484,6 +484,7 @@ const OrderHistory: React.FC = () => {
         </div>
       </div>
       <Table
+        size="middle"
         columns={columns}
         // dataSource={
         //   findByName
