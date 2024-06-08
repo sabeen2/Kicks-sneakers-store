@@ -493,7 +493,7 @@ const Order: React.FC = () => {
       />
 
       <Button
-        className=" mb-4  bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
+        className=" mb-4 hidden bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
         type="default"
         onClick={handleDownloadTransactionDetails}
         icon={<DownloadOutlined />}

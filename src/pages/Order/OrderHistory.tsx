@@ -404,11 +404,12 @@ const OrderHistory: React.FC = () => {
           </Breadcrumb>
         </div>
         <Button
-          className="bg-white text-black font-bold py-1 px-4 rounded-full transform hover:scale-105 hover:shadow-md"
+          className="   mb-4  bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
           type="default"
-          onClick={showDrawer}
+          onClick={handleDownloadTransactionDetails}
+          icon={<DownloadOutlined />}
         >
-          Create
+          Download Order Details
         </Button>
         <Drawer
           className="flex"
@@ -498,15 +499,6 @@ const OrderHistory: React.FC = () => {
         loading={orderHistoryLoading}
         rowKey="id"
       />
-
-      <Button
-        className="  hidden mb-4  bg-green-500 hover:bg-green-700 text-white font-bold px-2 rounded"
-        type="default"
-        onClick={handleDownloadTransactionDetails}
-        icon={<DownloadOutlined />}
-      >
-        Download Order Details
-      </Button>
 
       <Button
         className="ml-4 bg-blue-500  text-white font-bold px-2 rounded hidden"
