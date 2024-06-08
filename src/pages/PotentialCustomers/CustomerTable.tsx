@@ -28,6 +28,7 @@ const CustomerTable: React.FC = () => {
 
   const { data: allProductsData } = useGetAllProducts();
   const { data: potentialCustomers, refetch } = usePotentialCustomers();
+  const [form] = Form.useForm(); // Create form instance
 
   const columns = [
     {
@@ -71,6 +72,7 @@ const CustomerTable: React.FC = () => {
     setSelectedCustomer(record);
     console.log("Editing customer:", record);
     setEditingRecord(record);
+    form.setFieldsValue(record); // Set form values with the selected record
     setIsModalVisible(true);
   };
 
@@ -78,6 +80,7 @@ const CustomerTable: React.FC = () => {
     setIsModalVisible(false);
     setEditingRecord(null);
     setSelectedCustomer(null);
+    form.resetFields(); // Reset form fields
   };
 
   const handleSave = async (values: CustomerData) => {
@@ -116,6 +119,7 @@ const CustomerTable: React.FC = () => {
       setIsModalVisible(false);
       setEditingRecord(null);
       setSelectedCustomer(null);
+      form.resetFields();
     } catch (error) {
       console.error("Error:", error);
       message.error("An error occurred. Please try again.");
@@ -123,10 +127,13 @@ const CustomerTable: React.FC = () => {
   };
 
   const handleAdd = () => {
+    form.resetFields();
     setEditingRecord(null);
     setSelectedCustomer(null);
+    form.resetFields();
     setIsModalVisible(true);
   };
+  console.log({});
 
   return (
     <div className="p-4">
@@ -149,7 +156,11 @@ const CustomerTable: React.FC = () => {
         onCancel={handleCancel}
         footer={null}
       >
-        <Form initialValues={editingRecord || {}} onFinish={handleSave}>
+        <Form
+          form={form}
+          // initialValues={editingRecord || {}}
+          onFinish={handleSave}
+        >
           <Form.Item
             name="customerEmail"
             label="Customer Email"
