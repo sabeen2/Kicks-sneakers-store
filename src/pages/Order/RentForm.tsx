@@ -195,7 +195,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
           name="address"
           rules={[
             {
-              required: true,
+              required: false,
               message: "Please enter customer address",
             },
           ]}
@@ -207,7 +207,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
           name="customerEmail"
           rules={[
             {
-              required: true,
+              required: false,
               type: "email",
               message: "Please enter valid customer Email",
             },

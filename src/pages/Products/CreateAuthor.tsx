@@ -56,7 +56,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
       file: values.file?.[0]?.originFileObj,
     };
 
-    if (selectedAuthor?.length >= 1) {
+    if (selectedAuthor) {
       payload.prodId = selectedAuthor?.prodid;
     }
 
@@ -64,7 +64,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
     for (const key in payload) {
       formData.append(key, payload[key]);
     }
-    selectedAuthor?.length >= 1;
+    selectedAuthor;
     try {
       const response = await axios.post(
         "https://orderayo.onrender.com/products/add-product",
@@ -80,7 +80,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
       response;
 
       message.success(
-        selectedAuthor?.length >= 1
+        selectedAuthor
           ? `Edited product successfully: ${values.name}`
           : `Added product successfully: ${values.name}`
       );
@@ -204,7 +204,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
           }}
           rules={[
             {
-              required: true,
+              required: false,
               message: "Please upload a file",
             },
           ]}

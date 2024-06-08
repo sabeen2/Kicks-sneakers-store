@@ -89,11 +89,6 @@ const Order: React.FC = () => {
 
   const columns: TableProps<OrderDataType>["columns"] = [
     {
-      title: "Order ID",
-      dataIndex: "orderId",
-      key: "orderId",
-    },
-    {
       title: "Customer Name",
       dataIndex: "customerName",
       key: "customerName",
@@ -111,6 +106,11 @@ const Order: React.FC = () => {
       key: "customerContact",
     },
 
+    {
+      title: "Customer Email",
+      dataIndex: "customerEmail",
+      key: "customerEmail",
+    },
     {
       title: "Product Name",
       dataIndex: "products",

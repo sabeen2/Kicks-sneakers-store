@@ -66,12 +66,12 @@ export default function Charts() {
     {
       title: "Active Orders",
       value: activeOrders?.length,
-      amt: salesReportData?.total_orders,
+      amt: salesReportData?.active_orders,
     },
     {
       title: "Dispatched Orders",
       value: getOrderHistory?.length,
-      amt: salesReportData?.active_orders,
+      amt: salesReportData?.shipped_orders,
     },
   ];
 
