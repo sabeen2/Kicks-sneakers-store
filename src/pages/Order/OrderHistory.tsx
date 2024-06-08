@@ -163,10 +163,6 @@ const OrderHistory: React.FC = () => {
   //   setOpen(true);
   // };
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
   const onClose = () => {
     form.resetFields();
     setOpen(false);
