@@ -9,7 +9,6 @@ const {
   fetchAuthor,
   addProduct,
   fetchProuctsWithPagination,
-  deleteAuthor,
   updateAuthor,
   findAuthorById,
   downloadAuthorDetails,
