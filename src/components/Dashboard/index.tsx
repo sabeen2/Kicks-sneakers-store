@@ -11,6 +11,7 @@ import Charts from "../../pages/Charts";
 import { useEffect, useState } from "react";
 import { useChangePassword } from "../../api/user/queries";
 import OrderHistory from "../../pages/Order/OrderHistory";
+import CustomerTable from "../../pages/PotentialCustomers/CustomerTable";
 
 const { Header: AntHeader } = Layout;
 
@@ -142,6 +143,8 @@ const Dashboard: React.FC = () => {
               <Route path="book-setup" element={<BookSetup />} /> */}
               <Route path="order-list" element={<Order />} />
               <Route path="order-history" element={<OrderHistory />} />
+              <Route path="potential-customers" element={<CustomerTable />} />
+
               {/* <Route path="return-book" element={<Return />} /> */}
               {currentRole === "ADMIN" ? (
                 <Route path="manage-users" element={<Manage />} />

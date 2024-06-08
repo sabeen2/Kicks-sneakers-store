@@ -37,7 +37,7 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem("Dashboard", "11", <DashboardOutlined />, undefined, "/"),
+  getItem("Dashboard", "1", <DashboardOutlined />, undefined, "/"),
   getItem("Products", "sub1", <ProductOutlined />, [
     getItem("All Products", "3", undefined, undefined, "all-products"),
     // getItem("Category Setup", "4", undefined, undefined, "category-setup"),
@@ -46,6 +46,13 @@ const items: MenuItem[] = [
   ]),
   getItem("Orders", "sub2", <BookOutlined />, [
     getItem("Order List", "7", undefined, undefined, "order-list"),
+    getItem(
+      "Potential Customers",
+      "11",
+      undefined,
+      undefined,
+      "potential-customers"
+    ),
   ]),
   getItem(
     "Order History",
