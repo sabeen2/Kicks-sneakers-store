@@ -15,6 +15,7 @@ const {
   getImage,
   getImageBase,
   dispatchProduct,
+  fetchOutOfStock,
 } = author;
 
 // export const useFetchAuthor = () => {
@@ -42,6 +43,12 @@ export const useFetchAuthor = (requestData: any) => {
 export const useGetAllProducts = () => {
   return useQuery([fetchProuctsWithPagination.queryKeyName], () => {
     return makeHttpRequest(fetchProuctsWithPagination);
+  });
+};
+
+export const useOutOfStockProducts = () => {
+  return useQuery([fetchOutOfStock.queryKeyName], () => {
+    return makeHttpRequest(fetchOutOfStock);
   });
 };
 

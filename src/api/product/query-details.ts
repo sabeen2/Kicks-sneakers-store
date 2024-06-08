@@ -19,6 +19,13 @@ const author = {
     requestAuthType: RequestAuthType.AUTH,
   },
 
+  fetchOutOfStock: {
+    controllerName: `products/get-out-of-stock-products`,
+    queryKeyName: `FETCH_OUTSTOCK`,
+    requestMethod: RequestMethodEnum.GET,
+    requestAuthType: RequestAuthType.AUTH,
+  },
+
   addProduct: {
     controllerName: `products/add-product`,
     queryKeyName: `ADD_AUTHOR`,

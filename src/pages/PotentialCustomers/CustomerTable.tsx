@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Table, Button, Modal, Form, Input, Select, message } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { usePotentialCustomers } from "../../api/potential/queries";
-import { useGetAllProducts } from "../../api/product/queries";
+import { useOutOfStockProducts } from "../../api/product/queries";
 
 interface CustomerData {
   id?: number;
@@ -27,9 +27,10 @@ const CustomerTable: React.FC = () => {
   const [selectedCustomer, setSelectedCustomer] =
     useState<SelectedCustomer | null>(null);
 
-  const { data: allProductsData } = useGetAllProducts();
   const { data: potentialCustomers, refetch } = usePotentialCustomers();
   const [form] = Form.useForm(); // Create form instance
+
+  const { data: outOfStockData } = useOutOfStockProducts();
 
   const columns = [
     {
@@ -52,7 +53,7 @@ const CustomerTable: React.FC = () => {
       dataIndex: "productId",
       key: "productId",
       render: (productId: number) => {
-        const product = allProductsData?.find(
+        const product = outOfStockData?.find(
           (p: any) => p.prodId === productId
         );
         return product ? product.prodName : "Loading...";
@@ -193,7 +194,7 @@ const CustomerTable: React.FC = () => {
             rules={[{ required: true, message: "Please select the product!" }]}
           >
             <Select>
-              {allProductsData?.map((product: any) => (
+              {outOfStockData?.map((product: any) => (
                 <Select.Option key={product.prodId} value={product.prodId}>
                   {product.prodName}
                 </Select.Option>
