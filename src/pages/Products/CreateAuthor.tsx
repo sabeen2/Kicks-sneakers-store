@@ -47,7 +47,6 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
 
   const onFinish = async (values: any) => {
     setIsAddingProduct(true);
-
     let payload: any = {
       name: values.name,
       stock: values.stock,
@@ -57,7 +56,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
       file: values.file?.[0]?.originFileObj,
     };
 
-    if (selectedAuthor) {
+    if (selectedAuthor?.length >= 1) {
       payload.prodId = selectedAuthor?.prodid;
     }
 
@@ -65,7 +64,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
     for (const key in payload) {
       formData.append(key, payload[key]);
     }
-
+    selectedAuthor?.length >= 1;
     try {
       const response = await axios.post(
         "https://orderayo.onrender.com/products/add-product",
@@ -81,7 +80,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
       response;
 
       message.success(
-        selectedAuthor
+        selectedAuthor?.length >= 1
           ? `Edited product successfully: ${values.name}`
           : `Added product successfully: ${values.name}`
       );

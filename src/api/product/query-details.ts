@@ -68,6 +68,13 @@ const author = {
     requestMethod: RequestMethodEnum.GET,
     requestAuthType: RequestAuthType.AUTH,
   },
+
+  dispatchProduct: {
+    controllerName: `products/dispatch-orders`,
+    queryKeyName: `DISPATCH_PRODUCTS`,
+    requestMethod: RequestMethodEnum.DELETE,
+    requestAuthType: RequestAuthType.AUTH,
+  },
 };
 
 export default author;

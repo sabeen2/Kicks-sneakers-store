@@ -30,6 +30,7 @@ import {
   useGetBill,
   useDeleteTransaction,
 } from "../../api/order/queries";
+import moment from "moment";
 
 // interface TransactionDataType {
 //   id: any;
@@ -98,10 +99,18 @@ const Order: React.FC = () => {
       key: "customerName",
     },
     {
+      title: "Quantity",
+      dataIndex: "products",
+      key: "quantity",
+      render: (products: ProductDataType[]) =>
+        products.map((product) => product.quantity).join(", "),
+    },
+    {
       title: "Contact",
       dataIndex: "customerContact",
       key: "customerContact",
     },
+
     {
       title: "Product Name",
       dataIndex: "products",
@@ -118,7 +127,34 @@ const Order: React.FC = () => {
       title: "Order Date",
       dataIndex: "orderDate",
       key: "orderDate",
-      render: (date) => date.split("T")[0],
+      render: (orderDate: string) => {
+        const now = moment();
+        const orderMoment = moment(orderDate);
+        const hoursPassed = now.diff(orderMoment, "hours");
+
+        // Calculate color intensity based on the hours passed
+        const redIntensity = Math.min(
+          255,
+          Math.floor((hoursPassed / 24) * 255)
+        );
+        const backgroundColor = `rgb(255, ${255 - redIntensity}, ${
+          255 - redIntensity
+        })`;
+
+        return (
+          <div
+            className="px-4 py-1 inline-flex rounded-lg text-white font-bold"
+            style={{
+              backgroundColor,
+              // padding: "0.5rem",
+              // borderRadius: "1rem",
+              // color: "white",
+            }}
+          >
+            {orderMoment.format("YYYY-MM-DD ")}
+          </div>
+        );
+      },
     },
     {
       title: "Action",

@@ -1,20 +1,32 @@
 import React, { useState } from "react";
-import { Button, Drawer, Form, Card, Pagination, Modal } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Card,
+  Pagination,
+  Modal,
+  message,
+  Input,
+} from "antd";
 import CreateAuthor from "./CreateAuthor";
-import { useFetchAuthor } from "../../api/product/queries";
+import { useDeleteProducts, useFetchAuthor } from "../../api/product/queries";
 import ImageCard from "./imagePreview";
 import CreateTransaction from "../Order/RentForm";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const ProductList: React.FC = () => {
   // const [products, setProducts] = useState<any[]>([]);
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
   const [selectedAuthor, setSelectedAuthor] = useState<any>([]);
   const [pageSize, setPageSize] = useState(10);
+  const [searchText, setSearchText] = useState<String | any>("");
   const [thisSelectedProduct, setThisSelectedProduct] = useState<any>([]);
 
   const [page, setPage] = useState(1);
   setPageSize;
   const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -50,6 +62,7 @@ const ProductList: React.FC = () => {
   };
 
   const { data: productData, refetch: refetchProducts } = useFetchAuthor({
+    name: searchText,
     row: pageSize,
     page: page,
   });
@@ -59,8 +72,49 @@ const ProductList: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const { mutate: deleteProd } = useDeleteProducts();
+
+  const deleteOrder = (currentOrder: any) => {
+    console.log(currentOrder);
+    deleteProd(currentOrder, {
+      onSuccess: () => {
+        message.success("Sucessfully Deleted");
+      },
+      onError: (error) => {
+        message.error(`Failed Deleting ${error}`);
+      },
+    });
+  };
+
+  const onFinishSearch = (data: any) => {
+    setSearchText(data.searchInput);
+  };
+
   return (
     <div className="mx-auto container h-screen ">
+      <div className="w-60 mb-4 mt-2">
+        <Form
+          onFinish={onFinishSearch}
+          form={searchForm}
+          className="flex gap-x-4"
+        >
+          <Form.Item name="searchInput">
+            <Input
+              placeholder="Search"
+              className="border-2 border-blue-500 focus:border-blue-700 rounded-md  outline-none font-extrabold"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              className="bg-blue-700 text-white  hover:border-[1px] hover:border-gray-600 hover:text-black"
+              type="default"
+              htmlType="submit"
+            >
+              Search
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
       <div className="flex justify-end mb-6">
         <Button
           className="bg-black text-white font-semibold"
@@ -74,7 +128,7 @@ const ProductList: React.FC = () => {
           <Card
             size="small"
             key={index}
-            className=" bg-white rounded-lg shadow-md overflow-hidden  "
+            className=" bg-white rounded-lg shadow-md overflow-hidden"
           >
             <div className="relative">
               <ImageCard
@@ -128,6 +182,16 @@ const ProductList: React.FC = () => {
               >
                 Create Order
               </button>
+
+              <button
+                key={item?.prodid}
+                onClick={() => {
+                  deleteOrder(item.prodid);
+                }}
+                className="mt-4 ml-2  bg-red-600 text-white font-medium hover:bg-white  hover:text-black duration delay-100 hover:scale-105 rounded-lg px-2 py-1 hover  "
+              >
+                <DeleteOutlined />
+              </button>
             </div>
           </Card>
         ))}
@@ -143,7 +207,7 @@ const ProductList: React.FC = () => {
       />
 
       <Drawer
-        title={selectedAuthor ? "Edit product" : "Create Product"}
+        title={selectedAuthor?.length >= 1 ? "Edit product" : "Create Product"}
         placement="right"
         onClose={closeDrawer}
         visible={drawerVisible}

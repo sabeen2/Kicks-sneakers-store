@@ -84,6 +84,7 @@ const OrderHistory: React.FC = () => {
       dataIndex: "customerName",
       key: "customerName",
     },
+
     {
       title: "Contact",
       dataIndex: "customerContact",

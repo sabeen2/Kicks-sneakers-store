@@ -15,6 +15,7 @@ const {
   downloadAuthorDetails,
   getImage,
   getImageBase,
+  dispatchProduct,
 } = author;
 
 // export const useFetchAuthor = () => {
@@ -33,7 +34,6 @@ export const useFetchAuthor = (requestData: any) => {
         requestData,
       }),
     {
-      // select: (data) => data?.data,
       staleTime: 0,
       enabled: !!(requestData.page && requestData.row),
     }
@@ -54,11 +54,11 @@ export const useAddProduct = () => {
   });
 };
 
-export const useDeleteAuthor = () => {
-  return useMutation((authorID: number) => {
-    return makeHttpRequest(deleteAuthor, {
+export const useDeleteProducts = () => {
+  return useMutation((productId: number) => {
+    return makeHttpRequest(dispatchProduct, {
       params: {
-        id: authorID,
+        id: productId,
       },
     });
   });
