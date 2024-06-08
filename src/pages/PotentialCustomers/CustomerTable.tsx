@@ -23,6 +23,7 @@ interface SelectedCustomer {
 const CustomerTable: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingRecord, setEditingRecord] = useState<CustomerData | null>(null);
+  editingRecord;
   const [selectedCustomer, setSelectedCustomer] =
     useState<SelectedCustomer | null>(null);
 
