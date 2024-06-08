@@ -62,7 +62,11 @@ const ProductList: React.FC = () => {
   };
 
   const createOrder = (currentOrder: any) => {
-    setThisSelectedProduct(currentOrder);
+    setThisSelectedProduct({
+      prodid: currentOrder?.prodid,
+      prodName: currentOrder?.prodname?.value,
+    });
+
     setIsModalOpen(true);
   };
 

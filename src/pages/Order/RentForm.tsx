@@ -1,18 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  // FormInstance,
-  Input,
-  Space,
-  message,
-  Select,
-  InputNumber,
-} from "antd";
-
+import React, { useEffect } from "react";
+import { Button, Form, Input, Space, message, Select, InputNumber } from "antd";
 import { useAddTransaction } from "../../api/order/queries";
-import axios from "axios";
-import { BASE_API_ENDPOINT } from "../../config/api.config";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { useGetAllProducts } from "../../api/product/queries";
 
 const layout = {
   labelCol: { span: 8 },
@@ -27,6 +17,7 @@ interface TransactionDataType {
   orderId?: any;
   quantity: any;
   productId: any;
+  products: any;
   customerName: any;
   customerEmail: any;
   address: any;
@@ -60,113 +51,68 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
   const { mutate: addTransaction, isLoading: isAddingTransaction } =
     useAddTransaction();
 
-  const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-
-  const handleProductSelect = (selectedProductIds: any) => {
-    setSelectedProducts(selectedProductIds);
-  };
-
-  const renderQuantityInputs = () => {
-    return selectedProducts.map((productId) => (
-      <Form.Item
-        key={productId}
-        // label={
-        //   thisSelectedProduct
-        //     ? `Quantity  for prod ${thisSelectedProduct?.prodid}`
-        //     : `Quantityy for prod ${productId}`
-        // }
-        label={`Quantity for prod ${productId}`}
-        // name={
-        //   ["orderItems", productId, "quantity"] || [
-        //     "orderItems",
-        //     thisSelectedProduct?.prodid,
-        //     "quantity",
-        //   ]
-        // }
-
-        // name={
-        //   thisSelectedProduct
-        //     ? ["orderItems", thisSelectedProduct.prodid, "quantity"]
-        //     : ["orderItems", productId, "quantity"]
-        // }
-
-        name={["orderItems", productId, "quantity"]}
-        rules={[{ required: true, message: "Please enter quantity" }]}
-      >
-        <InputNumber className="w-full" />
-      </Form.Item>
-    ));
-  };
-
   const onFinish = (values: any) => {
     let payload: PayloadType = {
       customerName: values.customerName,
       customerEmail: values.customerEmail,
       address: values.address,
       customerContact: values.customerContact,
-      orderItems: selectedProducts.map((productId) => ({
-        productId,
-        quantity: values.orderItems[productId]?.quantity, // Get quantity for each product
+      orderItems: values.orderItems.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        // Add the 'id' field if 'selectedTransaction' is defined
+        ...(selectedTransaction ? { id: item.id } : {}),
       })),
     };
 
     if (selectedTransaction) {
+      console.log(selectedTransaction);
       payload = {
         ...payload,
-        orderId: (selectedTransaction as { orderId: any }).orderId,
+        orderId: selectedTransaction.orderId,
       };
     }
-
-    selectedTransaction
-      ? addTransaction(payload, {
-          onSuccess: (data: any) => {
-            message.success(`Edited transaction Sucessfully:  ${data}`);
-            onSucess();
-          },
-        })
-      : addTransaction(payload, {
-          onSuccess: (data) => {
-            message.success(`Added transaction Sucessfully:  ${data}`);
-            onSucess();
-          },
-          onError: (errorMessage: any) => {
-            message.error(`Failed : ${errorMessage}`);
-          },
-        });
+    addTransaction(payload, {
+      onSuccess: (data: any) => {
+        message.success(
+          `Transaction successfully ${
+            selectedTransaction ? "edited" : "added"
+          }: ${data}`
+        );
+        onSucess();
+      },
+      onError: (errorMessage: any) => {
+        message.error(`Failed: ${errorMessage}`);
+      },
+    });
   };
 
   useEffect(() => {
     if (selectedTransaction) {
-      form.setFieldsValue(selectedTransaction);
-    } else if (thisSelectedProduct) {
       form.setFieldsValue({
-        productId: thisSelectedProduct.prodid,
-        prodName: thisSelectedProduct.prodname.value,
+        ...selectedTransaction,
+        orderItems: selectedTransaction?.products?.map((product: any) => ({
+          id: product.orderItems,
+          productId: product.prodId,
+          quantity: product.quantity,
+        })),
       });
     }
-  }, [selectedTransaction, form]);
+    // else if (thisSelectedProduct) {
+    //   form.setFieldsValue({
+    //     orderItems: {
+    //       productId: thisSelectedProduct.prodid,
+    //       quantity: 1,
+    //     },
+    //   });
+    // }
+  }, [selectedTransaction, form, thisSelectedProduct]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem("bookRental");
-        const response = await axios.post(
-          `${BASE_API_ENDPOINT}/products/all-products-without-pagination`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              accept: "*/*",
-            },
-          }
-        );
-        setProducts(response.data.data);
-      } catch (error) {}
-    };
+  const { data: nonPaginatedProducts } = useGetAllProducts();
 
-    fetchProducts();
-  }, []);
+  // console.log(thisSelectedProduct?.map((items) => console.log(items)));
+
+  console.log(thisSelectedProduct);
 
   return (
     <div className="bg-white p-6 rounded">
@@ -195,10 +141,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
           label="Customer Address"
           name="address"
           rules={[
-            {
-              required: false,
-              message: "Please enter customer address",
-            },
+            { required: false, message: "Please enter customer address" },
           ]}
         >
           <Input className="w-full" />
@@ -216,23 +159,62 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
         >
           <Input className="w-full" />
         </Form.Item>
-        <Form.Item
-          label="Product"
-          name="productId"
-          rules={[{ required: true, message: "Please select a product" }]}
-        >
-          <Select
-            mode="multiple"
-            className="w-full"
-            placeholder="Select Product"
-            options={products?.map((product: any) => ({
-              value: product.prodId,
-              label: product.prodName,
-            }))}
-            onChange={handleProductSelect}
-          />
-        </Form.Item>
-        {renderQuantityInputs()}
+
+        <Form.List name="orderItems">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, fieldKey, ...restField }) => (
+                <Space
+                  key={key}
+                  style={{ display: "flex", marginBottom: 8 }}
+                  align="baseline"
+                >
+                  <Form.Item
+                    {...restField}
+                    name={[name, "productId"]}
+                    rules={[
+                      { required: true, message: "Please select a product" },
+                    ]}
+                    className="w-48 ml-48"
+                  >
+                    <Select placeholder="Select a product">
+                      {nonPaginatedProducts?.map((product: any) => (
+                        <Select.Option
+                          key={product.prodId}
+                          value={product.prodId}
+                        >
+                          {product.prodName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "quantity"]}
+                    rules={[
+                      { required: true, message: "Please enter quantity" },
+                    ]}
+                  >
+                    <InputNumber min={1} placeholder="Quantity" />
+                  </Form.Item>
+                  <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  className="ml-48"
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Add Product
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+
         <Form.Item {...tailLayout}>
           <Space>
             <Button
@@ -256,4 +238,5 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
     </div>
   );
 };
+
 export default CreateTransaction;

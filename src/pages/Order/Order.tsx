@@ -437,6 +437,141 @@ const Order: React.FC = () => {
               onSucess={onClose}
             />
           </div>
+
+          {/* <Form
+            form={addForm}
+            name="Order Setup"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            style={{ maxWidth: 600 }}
+            initialValues={{ remember: true }}
+            onFinish={onFinishAdd}
+            autoComplete="off"
+          >
+            <Form.Item
+              label="Customer Name"
+              name="customerName"
+              rules={[
+                { required: true, message: "Please enter customer name" },
+              ]}
+            >
+              <Input className="w-full" />
+            </Form.Item>
+            <Form.Item
+              label="Customer Contact"
+              name="customerContact"
+              rules={[
+                { required: true, message: "Please enter customer contact" },
+              ]}
+            >
+              <Input className="w-full" />
+            </Form.Item>
+            <Form.Item
+              label="Customer Address"
+              name="address"
+              rules={[
+                { required: false, message: "Please enter customer address" },
+              ]}
+            >
+              <Input className="w-full" />
+            </Form.Item>
+            <Form.Item
+              label="Customer Email"
+              name="customerEmail"
+              rules={[
+                {
+                  required: false,
+                  type: "email",
+                  message: "Please enter valid customer Email",
+                },
+              ]}
+            >
+              <Input className="w-full" />
+            </Form.Item>
+
+            <Form.List name="products">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, fieldKey, ...restField }) => (
+                    <Space
+                      key={key}
+                      style={{ display: "flex", marginBottom: 8 }}
+                      align="baseline"
+                    >
+                      <Form.Item
+                        {...restField}
+                        name={[name, "product"]}
+                        fieldKey={[fieldKey, "product"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select a product",
+                          },
+                        ]}
+                      >
+                        <Select placeholder="Select product" className="w-full">
+                          {productsList.map(
+                            (product: { prodId: any; prodName: any }) => (
+                              <Option
+                                key={product.prodId}
+                                value={product.prodId}
+                              >
+                                {product.prodName}
+                              </Option>
+                            )
+                          )}
+                        </Select>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "quantity"]}
+                        fieldKey={[fieldKey, "quantity"]}
+                        rules={[
+                          { required: true, message: "Please enter quantity" },
+                        ]}
+                      >
+                        <InputNumber
+                          min={1}
+                          placeholder="Quantity"
+                          className="w-full"
+                        />
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </Space>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Add Product
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+
+            <Form.Item>
+              <Space>
+                <Button
+                  className="bg-blue-400 text-white font-bold px-4 rounded-full"
+                  type="default"
+                  htmlType="submit"
+                >
+                  Submit
+                </Button>
+                <Button
+                  className="border border-gray-900 py-1 px-5 rounded-full"
+                  htmlType="button"
+                  onClick={() => form.resetFields()}
+                >
+                  Reset
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form> */}
         </Drawer>
       </div>
       <div className=" flex flex-wrap items-center">
