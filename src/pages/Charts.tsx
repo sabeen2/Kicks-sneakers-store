@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import ImageCard from "./imagePreview";
 import axios from "axios";
 
+import { BASE_API_ENDPOINT } from "../config/api.config";
+
 Chart.register(CategoryScale);
 
 export default function Charts() {
@@ -131,7 +133,7 @@ export default function Charts() {
       const { to, subject, message } = values;
       const token = localStorage.getItem("bookRental");
 
-      const url = `https://orderayo.onrender.com/mail/send-mail?to=${encodeURIComponent(
+      const url = `${BASE_API_ENDPOINT}/mail/send-mail?to=${encodeURIComponent(
         to
       )}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
         message

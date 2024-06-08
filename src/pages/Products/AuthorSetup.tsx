@@ -25,8 +25,10 @@ const ProductList: React.FC = () => {
   const [form] = Form.useForm();
   const [searchForm] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  let deleted = false;
 
   const { data: productData, refetch: refetchProducts } = useFetchAuthor({
+    isDeleted: deleted,
     name: searchText,
     row: pageSize,
     page: page,

@@ -3,6 +3,7 @@ import { Table, Button, Modal, Form, Input, Select, message } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { usePotentialCustomers } from "../../api/potential/queries";
 import { useOutOfStockProducts } from "../../api/product/queries";
+import { BASE_API_ENDPOINT } from "../../config/api.config";
 
 interface CustomerData {
   id?: number;
@@ -87,7 +88,7 @@ const CustomerTable: React.FC = () => {
 
   const handleSave = async (values: CustomerData) => {
     const token = localStorage.getItem("bookRental");
-    const url = "https://orderayo.onrender.com/potential-customers";
+    const url = `${BASE_API_ENDPOINT}/potential-customers`;
     const headers = {
       Accept: "*/*",
       Authorization: `Bearer ${token}`,

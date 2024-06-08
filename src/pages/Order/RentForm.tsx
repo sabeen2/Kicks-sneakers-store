@@ -12,6 +12,7 @@ import {
 
 import { useAddTransaction } from "../../api/order/queries";
 import axios from "axios";
+import { BASE_API_ENDPOINT } from "../../config/api.config";
 
 const layout = {
   labelCol: { span: 8 },
@@ -151,7 +152,7 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
       try {
         const token = localStorage.getItem("bookRental");
         const response = await axios.post(
-          "https://orderayo.onrender.com/products/all-products-without-pagination",
+          `${BASE_API_ENDPOINT}/products/all-products-without-pagination`,
           {},
           {
             headers: {

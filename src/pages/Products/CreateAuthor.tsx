@@ -10,6 +10,7 @@ import {
   Select,
 } from "antd";
 import axios from "axios";
+import { BASE_API_ENDPOINT } from "../../config/api.config";
 
 const layout = {
   labelCol: { span: 8 },
@@ -67,7 +68,7 @@ const CreateAuthor: React.FC<CreateAuthorProps> = ({
     selectedAuthor;
     try {
       const response = await axios.post(
-        "https://orderayo.onrender.com/products/add-product",
+        `${BASE_API_ENDPOINT}/products/add-product`,
         formData,
         {
           headers: {
