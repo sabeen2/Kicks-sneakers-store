@@ -72,6 +72,8 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
         orderId: selectedTransaction.orderId,
       };
     }
+
+    // else if (isSele)
     addTransaction(payload, {
       onSuccess: (data: any) => {
         message.success(
@@ -97,16 +99,17 @@ const CreateTransaction: React.FC<CreateTransactionProps> = ({
           quantity: product.quantity,
         })),
       });
+    } else if (thisSelectedProduct) {
+      form.setFieldsValue({
+        orderItems: [
+          {
+            productId: thisSelectedProduct.prodid,
+            quantity: 1,
+          },
+        ],
+      });
     }
-    // else if (thisSelectedProduct) {
-    //   form.setFieldsValue({
-    //     orderItems: {
-    //       productId: thisSelectedProduct.prodid,
-    //       quantity: 1,
-    //     },
-    //   });
-    // }
-  }, [selectedTransaction, form, thisSelectedProduct]);
+  }, [selectedTransaction, thisSelectedProduct, form]);
 
   const { data: nonPaginatedProducts } = useGetAllProducts();
 

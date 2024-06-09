@@ -62,10 +62,7 @@ const ProductList: React.FC = () => {
   };
 
   const createOrder = (currentOrder: any) => {
-    setThisSelectedProduct({
-      prodid: currentOrder?.prodid,
-      prodName: currentOrder?.prodname?.value,
-    });
+    setThisSelectedProduct(currentOrder);
 
     setIsModalOpen(true);
   };
@@ -226,6 +223,7 @@ const ProductList: React.FC = () => {
         open={isModalOpen}
         footer={null}
         onCancel={handleCancel}
+        width={600}
       >
         <CreateTransaction
           form={form}
